@@ -18,8 +18,6 @@ public class SelectionScript : MonoBehaviour
     private GameObject rayIntersectionSphere = null;
 
     private RaycastHit hittedByRayCast;
-    // QUESTION: Is it good to set the trigger as a global variable?
-    private float trigger = 0.0f;
 
     void Start()
     {
@@ -28,7 +26,7 @@ public class SelectionScript : MonoBehaviour
 
     private void Update()
     {
-        UpdateRayVisualization(trigger, 0.00001f);
+       
     }
 
     /*
@@ -55,7 +53,10 @@ public class SelectionScript : MonoBehaviour
     public GameObject startRaySelection()
     {
         // Debug.Log("Start Ray Selection");
+        float trigger;
         SelectionXRController.inputDevice.TryGetFeatureValue(CommonUsages.trigger, out trigger);
+
+        UpdateRayVisualization(trigger, 0.00001f);
 
         return null;
     }
