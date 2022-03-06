@@ -81,11 +81,11 @@ public class SelectionScript : MonoBehaviour
     }
 
     private void UpdateRayVisualization(float inputValue, float threshold)
-    {        
+    {
+        Debug.Log("UpdateRayVisualization input variable is over threshold: " + inputValue + "isRayFlagOn: "+ isRayFlagOn);
         // Visualize ray if input value is bigger than a certain treshhold
         if (inputValue > threshold && isRayFlagOn == false)
-        {
-            // Debug.Log("UpdateRayVisualization input variable is over threshold: " + inputValue + "isRayFlagOn: "+ isRayFlagOn);
+        {           
             SelectionRayRenderer.enabled = true;
             isRayFlagOn = true;
         }
@@ -105,9 +105,10 @@ public class SelectionScript : MonoBehaviour
             disableHitpoint();
         }
     }
-
+    // Enables hit point to the ray
     private void enableHitpoint()
-    {            
+    {
+        Debug.Log("Enable hitpoint");
         // Check if something is hit and set hit point
         if (Physics.Raycast(SelectionHandController.transform.position,
                     SelectionHandController.transform.TransformDirection(Vector3.forward),
@@ -129,9 +130,9 @@ public class SelectionScript : MonoBehaviour
     }
     private void disableHitpoint()
     {
+        Debug.Log("Disable hitpoint");
         rayIntersectionSphere.SetActive(false);
     }
-
 
 
     // geometry for intersection visualization
@@ -141,7 +142,9 @@ public class SelectionScript : MonoBehaviour
         rayIntersectionSphere.name = "Ray Intersection Sphere";
         rayIntersectionSphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
         rayIntersectionSphere.GetComponent<MeshRenderer>().material.color = Color.blue;
-        rayIntersectionSphere.GetComponent<SphereCollider>().enabled = false; // disable for picking ?!
-        rayIntersectionSphere.SetActive(false); // hide
+        rayIntersectionSphere.GetComponent<SphereCollider>().enabled = false;
+        rayIntersectionSphere.SetActive(false);
+
+        //Debug.Log("RayIntersectionSphere created");
     }
 }
