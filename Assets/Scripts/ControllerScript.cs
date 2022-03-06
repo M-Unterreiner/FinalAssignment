@@ -19,28 +19,31 @@ public class ControllerScript : MonoBehaviour
     private GameObject XRRigGameobject;
     private GameObject mainCamera = null;
 
+    // QUESTION: Is this LineRenderer clean code? Because the Controller shouldn't be interested 
+    private LineRenderer rightRayRenderer = null;
 
     private SelectionScript select;
     private NavigationScript navigate;
 
-
-
     // Start is called before the first frame update
     void Start()
     {
+        select = GetComponent<SelectionScript>();
+        navigate = GetComponent<NavigationScript>();
+
         mainCamera = GameObject.Find("Main Camera");
-        platformCenter = GameObject.Find("Center");
         rightHandController = GameObject.Find("RightHand Controller");
+        rightXRController = rightHandController.GetComponent<XRController>();
 
         if (rightHandController != null) // guard
         {
             rightXRController = rightHandController.GetComponent<XRController>();           
             XRRigGameobject = mainCamera.transform.parent.transform.parent.gameObject;
-        }
 
-        select = GetComponent<SelectionScript>();
-        navigate = GetComponent<NavigationScript>();
-
+            rightRayRenderer = rightHandController.AddComponent<LineRenderer>();
+            rightXRController = rightHandController.GetComponent<XRController>();
+            rightRayRenderer = select.createRayRenderer(rightRayRenderer, rightHandController, rightXRController);
+        }   
     }
 
     // Update is called once per frame
