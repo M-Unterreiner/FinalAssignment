@@ -24,10 +24,7 @@ public class SelectionScript : MonoBehaviour
 
     private void Update()
     {
-        float trigger = 0.0f;
 
-        //SelectionXRController.inputDevice.TryGetFeatureValue(CommonUsages.trigger, out trigger);
-        //UpdateRayVisualization(trigger, 0.00001f);
     }
 
     /*
@@ -74,5 +71,50 @@ public class SelectionScript : MonoBehaviour
     {
 
         return null;
+    }
+
+    // TODO: ImplementRayInterSectionSphere
+    private void UpdateRayVisualization(float inputValue, float threshold)
+    {
+        // Visualize ray if input value is bigger than a certain treshhold
+        if (inputValue > threshold && rayOnFlag == false)
+        {
+            SelectionRayRenderer.enabled = true;
+            rayOnFlag = true;
+        }
+        else if (inputValue < threshold && rayOnFlag)
+        {
+            SelectionRayRenderer.enabled = false;
+            rayOnFlag = false;
+        }
+
+        // update ray length and intersection point of ray
+        if (rayOnFlag)
+        { // if ray is on
+
+            // Check if something is hit and set hit point
+            if (Physics.Raycast(SelectionHandController.transform.position,
+                        SelectionHandController.transform.TransformDirection(Vector3.forward),
+                        out hit, Mathf.Infinity, myLayerMask))
+            {
+                SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
+                SelectionRayRenderer.SetPosition(1, hit.point);
+
+                // TODO: Implement the RayIntersectionSphere
+                //rightRayIntersectionSphere.SetActive(true);
+                //rightRayIntersectionSphere.transform.position = hit.point;
+            }
+            else
+            { // if nothing is hit set ray length to 100
+                SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
+                SelectionRayRenderer.SetPosition(1, SelectionHandController.transform.position + SelectionHandController.transform.TransformDirection(Vector3.forward) * 100);
+
+                rightRayIntersectionSphere.SetActive(false);
+            }
+        }
+        else
+        {
+            rightRayIntersectionSphere.SetActive(false);
+        }
     }
 }
