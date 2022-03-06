@@ -98,7 +98,7 @@ public class ControllerScript : MonoBehaviour
         if (trigger > 0.0f)
         {
             // Debug.Log("Trigger Touched");
-            select.SelectByHitRay();
+            select.startRaySelection();
         }
 
     }
