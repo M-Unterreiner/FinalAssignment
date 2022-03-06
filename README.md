@@ -13,7 +13,9 @@ Stretch GoGo technique and compare all of your implementations for distant objec
 ## Strech GoGo
 
 # ToDo
-1. Create Scene
-2. Implement simple navigation
-3. Seperate scripts in different files
-4. Implement RayCast
+1. ✅ Create Scene 
+2. ✅ Implement simple navigation
+3. ✅ Seperate scripts in different files
+4. ✅ Implement RayCast
+5. Implement Go-Go Technique
+6. Implement Homer
