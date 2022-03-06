@@ -17,9 +17,9 @@ public class SelectionScript : MonoBehaviour
     public LayerMask myLayerMask;
     private GameObject rayIntersectionSphere = null;
 
-    private RaycastHit hit;
+    private RaycastHit hittedByRayCast;
     // QUESTION: Is it good to set the trigger as a global variable?
-    private float trigger = 0.0f; 
+    private float trigger = 0.0f;
 
     void Start()
     {
@@ -28,7 +28,7 @@ public class SelectionScript : MonoBehaviour
 
     private void Update()
     {
-     UpdateRayVisualization(trigger, 0.00001f);
+        UpdateRayVisualization(trigger, 0.00001f);
     }
 
     /*
@@ -41,35 +41,20 @@ public class SelectionScript : MonoBehaviour
         SelectionHandController = HandController;
         SelectionXRController = HandXRController;
 
-        if (SelectionXRController == null)
-        {
-            Debug.Log("SelectionXRController == null");
-        }
-
-        if (SelectionHandController == null)
-        {
-            Debug.Log("SelectionHandController == null");
-        }
-        
         SelectionRayRenderer.name = "Ray Renderer";
         SelectionRayRenderer.startWidth = 0.01f;
         SelectionRayRenderer.positionCount = 2;
 
-        if (SelectionRayRenderer == null)
-        {
-            Debug.Log("SelectionRayRenderer == null");
-        }
-
         createRayIntersectionSphere();
 
-        Debug.Log("RayRenderer created");
+        //Debug.Log("RayRenderer created");
 
         return SelectionRayRenderer;
     }
 
     public GameObject startRaySelection()
     {
-        Debug.Log("Start Ray Selection");
+        // Debug.Log("Start Ray Selection");
         SelectionXRController.inputDevice.TryGetFeatureValue(CommonUsages.trigger, out trigger);
 
         return null;
@@ -82,10 +67,10 @@ public class SelectionScript : MonoBehaviour
 
     private void UpdateRayVisualization(float inputValue, float threshold)
     {
-        Debug.Log("UpdateRayVisualization input variable is over threshold: " + inputValue + "isRayFlagOn: "+ isRayFlagOn);
+        // Debug.Log("UpdateRayVisualization input variable is over threshold: " + inputValue + "isRayFlagOn: " + isRayFlagOn);
         // Visualize ray if input value is bigger than a certain treshhold
         if (inputValue > threshold && isRayFlagOn == false)
-        {           
+        {
             SelectionRayRenderer.enabled = true;
             isRayFlagOn = true;
         }
@@ -98,39 +83,70 @@ public class SelectionScript : MonoBehaviour
         // update ray length and intersection point of ray
         if (isRayFlagOn)
         { // if ray is on
+            Debug.Log("UpdateRayVisualization enables Hitpoint");
             enableHitpoint();
         }
         else
         {
+            Debug.Log("UpdateRayVisualization disable Hitpoint");
             disableHitpoint();
         }
     }
     // Enables hit point to the ray
     private void enableHitpoint()
     {
-        Debug.Log("Enable hitpoint");
-        // Check if something is hit and set hit point
-        if (Physics.Raycast(SelectionHandController.transform.position,
-                    SelectionHandController.transform.TransformDirection(Vector3.forward),
-                    out hit, Mathf.Infinity, myLayerMask))
+        
+        if (hitsRaycast())
         {
-            SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
-            SelectionRayRenderer.SetPosition(1, hit.point);
-
-            rayIntersectionSphere.SetActive(true);
-            rayIntersectionSphere.transform.position = hit.point;
+            //Debug.Log("enableHitpoints tries to enableRayIntersectionSphere");
+            enableRayIntersectionSphere();
         }
         else
-        { // if nothing is hit set ray length to 100
-            SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
-            SelectionRayRenderer.SetPosition(1, SelectionHandController.transform.position + SelectionHandController.transform.TransformDirection(Vector3.forward) * 100);
-
-            rayIntersectionSphere.SetActive(false);
+        { 
+            disableRayIntersectionSphere();
         }
     }
     private void disableHitpoint()
     {
-        Debug.Log("Disable hitpoint");
+        //Debug.Log("Disable hitpoint");
+        rayIntersectionSphere.SetActive(false);
+    }
+
+
+    private bool hitsRaycast()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(SelectionHandController.transform.position,
+                    SelectionHandController.transform.TransformDirection(Vector3.forward),
+                    out hit, Mathf.Infinity, myLayerMask))
+        {
+            Debug.Log("hitsRaycast true");
+            hittedByRayCast = hit;
+            return true;
+        } else
+        {
+            Debug.Log("hitsRaycast false");
+            return false;
+        }
+
+    }
+    
+    
+    // if nothing is hit set ray length to 100
+    private void enableRayIntersectionSphere()
+        {
+            //Debug.Log("enableRayIntersectionSphere");
+            SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
+            SelectionRayRenderer.SetPosition(1, hittedByRayCast.point);
+            rayIntersectionSphere.SetActive(true);
+            rayIntersectionSphere.transform.position = hittedByRayCast.point;
+        }
+
+    private void disableRayIntersectionSphere()
+    {
+        //Debug.Log("disableRayIntersectionSphere");
+        SelectionRayRenderer.SetPosition(0, SelectionHandController.transform.position);
+        SelectionRayRenderer.SetPosition(1, SelectionHandController.transform.position + SelectionHandController.transform.TransformDirection(Vector3.forward) * 100);
         rayIntersectionSphere.SetActive(false);
     }
 
