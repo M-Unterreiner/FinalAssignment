@@ -50,11 +50,12 @@ public class SelectionScript : MonoBehaviour
         return SelectionRayRenderer;
     }
 
-    public GameObject startRaySelection()
+    public GameObject startRaySelection(GameObject HandController)
     {
         // Debug.Log("Start Ray Selection");
         float trigger;
         SelectionXRController.inputDevice.TryGetFeatureValue(CommonUsages.trigger, out trigger);
+        SelectionHandController = HandController;        
 
         UpdateRayVisualization(trigger, 0.00001f);
 
@@ -84,19 +85,18 @@ public class SelectionScript : MonoBehaviour
         // update ray length and intersection point of ray
         if (isRayFlagOn)
         { // if ray is on
-            Debug.Log("UpdateRayVisualization enables Hitpoint");
+            // Debug.Log("UpdateRayVisualization enables Hitpoint");
             enableHitpoint();
         }
         else
         {
-            Debug.Log("UpdateRayVisualization disable Hitpoint");
+            // Debug.Log("UpdateRayVisualization disable Hitpoint");
             disableHitpoint();
         }
     }
     // Enables hit point to the ray
     private void enableHitpoint()
     {
-        
         if (hitsRaycast())
         {
             //Debug.Log("enableHitpoints tries to enableRayIntersectionSphere");
@@ -113,25 +113,26 @@ public class SelectionScript : MonoBehaviour
         rayIntersectionSphere.SetActive(false);
     }
 
-
+    // 
     private bool hitsRaycast()
     {
+        //Debug.Log("HandControllerPosition: " + SelectionHandController.transform.position);
+
         RaycastHit hit;
         if (Physics.Raycast(SelectionHandController.transform.position,
                     SelectionHandController.transform.TransformDirection(Vector3.forward),
-                    out hit, Mathf.Infinity, myLayerMask))
+                    out hit, Mathf.Infinity /*, myLayerMask */))
         {
-            Debug.Log("hitsRaycast true");
+            //Debug.Log("hitsRaycast true");
             hittedByRayCast = hit;
             return true;
         } else
         {
-            Debug.Log("hitsRaycast false");
+            // Debug.Log("hitsRaycast false");
             return false;
         }
 
     }
-    
     
     // if nothing is hit set ray length to 100
     private void enableRayIntersectionSphere()
