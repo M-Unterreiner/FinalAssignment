@@ -34,6 +34,9 @@ public class SelectionScript : MonoBehaviour
         Debug.Log("SelectionScript was enabled");
     }
 
+    /*
+     * At the moment mainCamera.transform.position is not used which leads to an visibility selection difference
+     */
     public LineRenderer createSelectionWithRay(LineRenderer RayRenderer, GameObject HandController, XRController HandXRController)
     {
         mySelectionRay = new RayScript(RayRenderer, HandController, HandXRController, "SelectionRay");
