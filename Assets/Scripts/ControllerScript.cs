@@ -14,6 +14,9 @@ public class ControllerScript : MonoBehaviour
     
     public bool triggerPressed = false;
     public bool triggerReleased = false;
+
+    // ButtonLFs prevents to fast changes of interactions.
+    private bool primaryButtonLF = false;
     private bool secondaryButtonLF = false;
 
     private GameObject XRRigGameobject;
@@ -24,16 +27,22 @@ public class ControllerScript : MonoBehaviour
 
     private SelectionScript select;
     private NavigationScript navigate;
+    private InteractionScript interact;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         select = GetComponent<SelectionScript>();
         navigate = GetComponent<NavigationScript>();
+        interact = GetComponent<InteractionScript>();
 
         mainCamera = GameObject.Find("Main Camera");
         rightHandController = GameObject.Find("RightHand Controller");
         rightXRController = rightHandController.GetComponent<XRController>();
+
+        
 
         if (rightHandController != null) // guard
         {
@@ -78,7 +87,6 @@ public class ControllerScript : MonoBehaviour
             bool secondaryButton = false;
             rightXRController.inputDevice.TryGetFeatureValue(CommonUsages.secondaryButton, out secondaryButton);
             controlSecondaryButton(secondaryButton);
- 
         }
     }
 
@@ -137,14 +145,23 @@ public class ControllerScript : MonoBehaviour
             navigate.steeringRight(joystick, inputScaleFactor);
         }
     }
+
+    /* Controls the primary button, when the state of the primary button changed.
+     */
     private void controlPrimaryButton(bool primaryButton)
     {
-        if (primaryButton)
+        if (primaryButton != primaryButtonLF) // state changed
         {
-            Debug.Log("Primary Button not implemented yet");
+            if (primaryButton)
+            {
+                interact.toggleTechnique();
+            }
         }
+        primaryButtonLF = primaryButton;
     }
 
+    /* Controls the secondary button, when the state of the primary button changed.
+ */
     private void controlSecondaryButton(bool secondaryButton)
     {
         if (secondaryButton != secondaryButtonLF) // state changed
