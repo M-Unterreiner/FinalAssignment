@@ -28,6 +28,7 @@ public class ControllerScript : MonoBehaviour
     private SelectionScript select;
     private NavigationScript navigate;
     private InteractionScript interact;
+    private GoGoScript gogo;
 
 
 
@@ -37,6 +38,8 @@ public class ControllerScript : MonoBehaviour
         select = GetComponent<SelectionScript>();
         navigate = GetComponent<NavigationScript>();
         interact = GetComponent<InteractionScript>();
+        gogo = GetComponent<GoGoScript>();
+
 
         mainCamera = GameObject.Find("Main Camera");
         rightHandController = GameObject.Find("RightHand Controller");
@@ -95,7 +98,11 @@ public class ControllerScript : MonoBehaviour
         if (grip > 0.1f)
         {
             Debug.Log("Grip not implemented yet");
-        }       
+            gogo.startGoGoHand();
+        } else
+        {
+            gogo.stopGoGoHand();
+        }      
     }
 
     private void controlTrigger(float trigger)
@@ -108,6 +115,8 @@ public class ControllerScript : MonoBehaviour
             // Debug.Log("Trigger Touched");
             // 
             select.showSelectionRay(rightHandController);// Doesn't exist anymore, should be select.startSelection
+            
+            
             // 
         }
         // Maybe I have to disable the SelectionRay again

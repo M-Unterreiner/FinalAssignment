@@ -71,7 +71,14 @@ public class GoGoScript : MonoBehaviour
 
     public void stopGoGoHand()
     {
-        DeselectObject();
+        if (selectedObject != null)
+        {
+            // YOUR CODE - BEGIN
+
+            DeselectObject();
+
+            // YOUR CODE - END  
+        }
     }
 
     public void moveHand(float distanceR, float distanceRx, float distanceRy, float distanceRz, float k)
