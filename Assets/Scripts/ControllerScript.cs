@@ -51,7 +51,7 @@ public class ControllerScript : MonoBehaviour
 
             rightRayRenderer = rightHandController.AddComponent<LineRenderer>();
             rightXRController = rightHandController.GetComponent<XRController>();
-            rightRayRenderer = select.createRayRenderer(rightRayRenderer, rightHandController, rightXRController);
+            rightRayRenderer = select.createSelectionWithRay(rightRayRenderer, rightHandController, rightXRController);
         }   
     }
 
@@ -106,8 +106,11 @@ public class ControllerScript : MonoBehaviour
         if (trigger > 0.0f)
         {
             // Debug.Log("Trigger Touched");
-            select.showRay(rightHandController);
+            // 
+            select.showSelectionRay(rightHandController);// Doesn't exist anymore, should be select.startSelection
+            // 
         }
+        // Maybe I have to disable the SelectionRay again
 
     }
 
