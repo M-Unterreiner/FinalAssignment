@@ -19,14 +19,9 @@ public class SelectionScript : MonoBehaviour
 
     private RaycastHit hittedByRayCast;
 
-    void Start()
+    void Awake()
     {
         isRayFlagOn = true;
-    }
-
-    private void Update()
-    {
-       
     }
 
     /*
@@ -38,7 +33,7 @@ public class SelectionScript : MonoBehaviour
         SelectionRayRenderer = RayRenderer;
         SelectionHandController = HandController;
         SelectionXRController = HandXRController;
-
+     
         SelectionRayRenderer.name = "Ray Renderer";
         SelectionRayRenderer.startWidth = 0.01f;
         SelectionRayRenderer.positionCount = 2;
@@ -50,7 +45,10 @@ public class SelectionScript : MonoBehaviour
         return SelectionRayRenderer;
     }
 
-    public GameObject startRaySelection(GameObject HandController)
+    /*
+     *  
+    */
+    public GameObject showRay(GameObject HandController)
     {
         // Debug.Log("Start Ray Selection");
         float trigger;
@@ -67,6 +65,9 @@ public class SelectionScript : MonoBehaviour
         return null;
     }
 
+    /*
+     * This function updates the ray and hitpoint visualization
+    */
     private void UpdateRayVisualization(float inputValue, float threshold)
     {
         // Debug.Log("UpdateRayVisualization input variable is over threshold: " + inputValue + "isRayFlagOn: " + isRayFlagOn);
@@ -76,7 +77,7 @@ public class SelectionScript : MonoBehaviour
             SelectionRayRenderer.enabled = true;
             isRayFlagOn = true;
         }
-        else if (inputValue < threshold && isRayFlagOn)
+        else if (inputValue < threshold && isRayFlagOn == true)
         {
             SelectionRayRenderer.enabled = false;
             isRayFlagOn = false;
@@ -94,6 +95,7 @@ public class SelectionScript : MonoBehaviour
             disableHitpoint();
         }
     }
+
     // Enables hit point to the ray
     private void enableHitpoint()
     {
@@ -165,4 +167,17 @@ public class SelectionScript : MonoBehaviour
 
         //Debug.Log("RayIntersectionSphere created");
     }
+
+    private void OnDisable()
+    {
+        isRayFlagOn = false;
+        Debug.Log("SelectionScript was disabled");
+    }
+
+    private void OnEnable()
+    {
+        isRayFlagOn = true;
+        Debug.Log("SelectionScript was enabled");
+    }
+
 }
