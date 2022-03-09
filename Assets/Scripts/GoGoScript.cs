@@ -42,16 +42,16 @@ public class GoGoScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float distanceR = Vector3.Distance(new Vector3(rightHandCenter.transform.position.x, 0, rightHandCenter.transform.position.z), new Vector3(head.transform.position.x, 0, head.transform.position.z));
+        float distanceHandHhead = Vector3.Distance(new Vector3(rightHandCenter.transform.position.x, 0, rightHandCenter.transform.position.z), new Vector3(head.transform.position.x, 0, head.transform.position.z));
 
-        float distanceRx = (rightHandCenter.transform.position.x - head.transform.position.x);
-        float distanceRy = (rightHandCenter.transform.position.y - head.transform.position.y);
-        float distanceRz = (rightHandCenter.transform.position.z - head.transform.position.z);
-        float k = 1.5f; // What is k again standing for?
+        float differencePositionHandHeadx = (rightHandCenter.transform.position.x - head.transform.position.x);
+        float differencePositionHandHeady = (rightHandCenter.transform.position.y - head.transform.position.y);
+        float differencePositionHandHeadz = (rightHandCenter.transform.position.z - head.transform.position.z);
+        float k = 1f; // What is k again standing for?
 
-        if (distanceR >= threshhold)
+        if (distanceHandHhead >= threshhold)
         {
-            moveHand(distanceR, distanceRx, distanceRy, distanceRz, k);
+            moveHand(distanceHandHhead, differencePositionHandHeadx, differencePositionHandHeady, differencePositionHandHeadz, k);
         }
         else
         {
@@ -64,7 +64,6 @@ public class GoGoScript : MonoBehaviour
     {
         if (rightDetector.collided && selectedObject == null)
         {
-            // Debug.Log("Collided with Object: " + rightDetector.collidedObject.name);
             SelectObject(rightDetector.collidedObject);
         }
     }
@@ -77,23 +76,36 @@ public class GoGoScript : MonoBehaviour
         }
     }
 
-    public void moveHand(float distanceR, float distanceRx, float distanceRy, float distanceRz, float k)
+    public void moveHand(float distanceHandHhead, float differencePositionHandHeadx, float differencePositionHandHeady, float differencePositionHandHeadz, float k)
     {
         // non-isomorphic
-        float fx = Mathf.Abs(distanceRx) + k * Mathf.Pow((Mathf.Abs(distanceRx) - threshhold), 2);
-        float fy = distanceRy + k * Mathf.Pow((distanceRy - threshhold), 2);
-        float fz = Mathf.Abs(distanceRz) + k * Mathf.Pow((Mathf.Abs(distanceRz) - threshhold), 2);
+        float fx = Mathf.Abs(differencePositionHandHeadx) + k * Mathf.Pow((Mathf.Abs(differencePositionHandHeadx) - threshhold), 2);
+        float fy = differencePositionHandHeady + k * Mathf.Pow((differencePositionHandHeady - threshhold), 2);
+        float fz = Mathf.Abs(differencePositionHandHeadz) + k * Mathf.Pow((Mathf.Abs(differencePositionHandHeadz) - threshhold), 2);
 
-        float f = distanceR + k * Mathf.Pow((distanceR - threshhold), 2);
+        float f = distanceHandHhead + k * Mathf.Pow((distanceHandHhead - threshhold), 2);
 
 
         float gogoz = Mathf.Sqrt(Mathf.Pow(fz, 2) + Mathf.Pow(fx, 2));
 
         rightHand.transform.localPosition = new Vector3(rightHand.transform.localPosition.x, rightHand.transform.localPosition.y, Mathf.Max(gogoz - threshhold - 0.06f, rightHandCenter.transform.localPosition.z));
-        // Debug.Log(distanceR);
-        // Debug.Log(gogoz - threshhold);
     }
 
+    private Matrix4x4 newLocalTranslationRotationScalingSelectedObject(GameObject myObject)
+    {
+        Matrix4x4 mat_obj;
+         return  mat_obj = Matrix4x4.TRS(myObject.transform.localPosition, myObject.transform.localRotation, myObject.transform.localScale);
+    }
+
+    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
+    {
+        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
+        return mat_hand;
+    }
+
+    /* SelectObjects gets the scale of the object, sets the parent to the hand.
+     * 
+     */
     private void SelectObject(GameObject collidedObject)
     {
         selectedObject = collidedObject;
@@ -110,26 +122,13 @@ public class GoGoScript : MonoBehaviour
         SetTransformByMatrix(selectedObject, mat_SelectedObject);
 
         selectedObject.transform.localScale = lossyScaleOfSelectedObject;
-        // Debug.Log("local sc a " + rightHandColliderProxy.transform.localScale);
-        // Debug.Log("lossy sc a " + rightHandColliderProxy.transform.lossyScale);
-        // Debug.Log(go.transform.name + go.transform.parent + selectedObject.transform.position);
     }
 
-    private Matrix4x4 newLocalTranslationRotationScalingSelectedObject(GameObject myObject)
-    {
-        Matrix4x4 mat_obj;
-         return  mat_obj = Matrix4x4.TRS(myObject.transform.localPosition, myObject.transform.localRotation, myObject.transform.localScale);
-    }
 
-    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
-    {
-        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
-        return mat_hand;
-    }
 
     /*
-     * DeselectObject sets parent to the selectedObject. Also it creates a new translation rotation sacling matrix for the selectedObject,
-     * hand by ther actual position, and scene.
+     * DeselectObject sets parent to the selectedObject. Also it creates a new local translation rotation scaling matrix for the selectedObject and 
+     * hand by their actual position, and scene. At the end it sets the position to the selectedObjects.
      * 
      */
     private void DeselectObject()
@@ -139,7 +138,8 @@ public class GoGoScript : MonoBehaviour
         Matrix4x4 mat_obj = newLocalTranslationRotationScalingSelectedObject(selectedObject);
         Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(rightHand);
         Matrix4x4 mat_scene = newTranslationRotationScalingMatrix(scene);
-
+        
+        // sets the position to the selectedObjects
         Matrix4x4 mat_go = Matrix4x4.Inverse(mat_scene) * mat_hand * mat_obj;
 
         SetTransformByMatrix(selectedObject, mat_go);
@@ -164,7 +164,6 @@ public class GoGoScript : MonoBehaviour
 
     private void OnEnable()
     {
-        //rightHandCenter.transform.position = rightHandCenter.transform.parent.position;
         rightHand.transform.position = rightHandCenter.transform.position;
         leftHand.transform.position = leftHandCenter.transform.position;
         rightHandColliderProxy.GetComponent<BoxCollider>().enabled = true;
