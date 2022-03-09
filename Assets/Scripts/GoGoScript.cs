@@ -24,7 +24,8 @@ public class GoGoScript : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        scene = GameObject.Find("Scene");
+        scene = GameObject.Find("Terrain");
+
         rightHandController = GameObject.Find("RightHand Controller");
         rightXRController = rightHandController.GetComponent<XRController>();
 
@@ -94,8 +95,8 @@ public class GoGoScript : MonoBehaviour
         float gogoz = Mathf.Sqrt(Mathf.Pow(fz, 2) + Mathf.Pow(fx, 2));
 
         rightHand.transform.localPosition = new Vector3(rightHand.transform.localPosition.x, rightHand.transform.localPosition.y, Mathf.Max(gogoz - threshhold - 0.06f, rightHandCenter.transform.localPosition.z));
-        Debug.Log(distanceR);
-        Debug.Log(gogoz - threshhold);
+        // Debug.Log(distanceR);
+        // Debug.Log(gogoz - threshhold);
     }
 
     private void SelectObject(GameObject go)
@@ -119,7 +120,6 @@ public class GoGoScript : MonoBehaviour
         // Debug.Log("local sc a " + rightHandColliderProxy.transform.localScale);
         // Debug.Log("lossy sc a " + rightHandColliderProxy.transform.lossyScale);
         // Debug.Log(go.transform.name + go.transform.parent + go.transform.position);
-
     }
 
     // TODO: FInd a better name for myObject
@@ -157,7 +157,6 @@ public class GoGoScript : MonoBehaviour
         // Debug.Log(selectedObject.transform.name + selectedObject.transform.parent + selectedObject.transform.position);
 
         selectedObject = null;
-
     }
 
     void SetTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
