@@ -13,6 +13,8 @@ public class InteractionScript : MonoBehaviour
     {
         techniques.Add(GetComponent<SelectionScript>());
         techniques.Add(GetComponent<GoGoScript>());
+        techniques.Add(GetComponent<FastGoGoScript>());
+        techniques.Add(GetComponent<StretchGoGoScript>());
 
         foreach (var t in techniques)
         {
