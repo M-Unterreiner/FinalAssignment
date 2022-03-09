@@ -31,8 +31,8 @@ public class GoGoScript : MonoBehaviour
         head = transform.Find("Camera Offset/Main Camera").gameObject;
         leftHand = transform.Find("Camera Offset/LeftHand Controller/HandLeft").gameObject;
         rightHand = transform.Find("Camera Offset/RightHand Controller/HandRight").gameObject;
-        leftHandCenter = transform.Find("Camera Offset/LeftHand Controller/LeftCenter").gameObject;
-        rightHandCenter = transform.Find("Camera Offset/RightHand Controller/RightCenter").gameObject;
+        leftHandCenter = transform.Find("Camera Offset/LeftHand Controller/LeftHandCenter").gameObject;
+        rightHandCenter = transform.Find("Camera Offset/RightHand Controller/RightHandCenter").gameObject;
 
         rightHandColliderProxy = GameObject.Find("HandColliderProxy");
         rightDetector = rightHandColliderProxy.GetComponent<CollisionDetectorScript>();
