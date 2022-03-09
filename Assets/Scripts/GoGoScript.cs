@@ -41,23 +41,28 @@ public class GoGoScript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        float distanceHandHhead = Vector3.Distance(new Vector3(rightHandCenter.transform.position.x, 0, rightHandCenter.transform.position.z), new Vector3(head.transform.position.x, 0, head.transform.position.z));
+    {        
+        float distanceHandHead = calculateHandHeadDistance(rightHandCenter, head);
+        float isomorphicDistance = Vector3.Distance(rightHandCenter.transform.position, head.transform.position); 
 
-        float differencePositionHandHeadx = (rightHandCenter.transform.position.x - head.transform.position.x);
-        float differencePositionHandHeady = (rightHandCenter.transform.position.y - head.transform.position.y);
-        float differencePositionHandHeadz = (rightHandCenter.transform.position.z - head.transform.position.z);
-        float k = 1f; // What is k again standing for?
-
-        if (distanceHandHhead >= threshhold)
+        if (distanceHandHead >= threshhold)
         {
-            moveHand(distanceHandHhead, differencePositionHandHeadx, differencePositionHandHeady, differencePositionHandHeadz, k);
+            moveHandNonIsomorphic(distanceHandHead, rightHandCenter, rightHand, head, isomorphicDistance, 25.0f);
         }
         else
         {
-            rightHand.transform.localPosition = rightHandCenter.transform.localPosition;
+            moveHandIsomorphic(rightHand, rightHandCenter, rightHandColliderProxy);
         }
         rightHandColliderProxy.transform.localPosition = rightHand.transform.localPosition;
+    }
+
+    private float calculateHandHeadDistance(GameObject hand, GameObject head)
+    {
+        Vector3 HeadToHandCenter = rightHandCenter.transform.position - head.transform.position;
+        HeadToHandCenter.y = 0;
+        float distanceHandHhead = HeadToHandCenter.magnitude;
+
+        return distanceHandHhead;
     }
 
     public void startGoGoHand()
@@ -76,19 +81,27 @@ public class GoGoScript : MonoBehaviour
         }
     }
 
-    public void moveHand(float distanceHandHhead, float differencePositionHandHeadx, float differencePositionHandHeady, float differencePositionHandHeadz, float k)
+    /*
+     * Moves hand non isomrphic with factor k.
+     */
+
+    public void moveHandNonIsomorphic(float distanceHandHhead, GameObject handCenter, GameObject hand, GameObject head, float isomorphicDistance, float k)
     {
-        // non-isomorphic
-        float fx = Mathf.Abs(differencePositionHandHeadx) + k * Mathf.Pow((Mathf.Abs(differencePositionHandHeadx) - threshhold), 2);
-        float fy = differencePositionHandHeady + k * Mathf.Pow((differencePositionHandHeady - threshhold), 2);
-        float fz = Mathf.Abs(differencePositionHandHeadz) + k * Mathf.Pow((Mathf.Abs(differencePositionHandHeadz) - threshhold), 2);
+        float nonIsomorphicDistance = isomorphicDistance + k * Mathf.Pow(isomorphicDistance - threshhold, 2);
 
         float f = distanceHandHhead + k * Mathf.Pow((distanceHandHhead - threshhold), 2);
+        Vector3 target = (hand.transform.position - head.transform.position).normalized * nonIsomorphicDistance + handCenter.transform.position;
 
+        hand.transform.position = Vector3.MoveTowards(hand.transform.position, target, 2.0f * Time.deltaTime);        
+    }
 
-        float gogoz = Mathf.Sqrt(Mathf.Pow(fz, 2) + Mathf.Pow(fx, 2));
-
-        rightHand.transform.localPosition = new Vector3(rightHand.transform.localPosition.x, rightHand.transform.localPosition.y, Mathf.Max(gogoz - threshhold - 0.06f, rightHandCenter.transform.localPosition.z));
+    /*
+    * Moves hand isomrphic.
+    */
+    public void moveHandIsomorphic(GameObject hand, GameObject handCenter, GameObject handCollider)
+    {
+        hand.transform.position = Vector3.MoveTowards(hand.transform.position, handCenter.transform.position, 1.0f * Time.deltaTime);
+        rightHandColliderProxy.transform.position = Vector3.MoveTowards(handCollider.transform.position, handCenter.transform.position, 1.0f * Time.deltaTime);
     }
 
     private Matrix4x4 newLocalTranslationRotationScalingSelectedObject(GameObject myObject)
