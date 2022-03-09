@@ -64,8 +64,7 @@ public class GoGoScript : MonoBehaviour
     {
         if (rightDetector.collided && selectedObject == null)
         {
-            Debug.Log("Collided with Object: " + rightDetector.collidedObject.name);
-            
+            // Debug.Log("Collided with Object: " + rightDetector.collidedObject.name);
             SelectObject(rightDetector.collidedObject);
         }
     }
@@ -74,11 +73,7 @@ public class GoGoScript : MonoBehaviour
     {
         if (selectedObject != null)
         {
-            // YOUR CODE - BEGIN
-
             DeselectObject();
-
-            // YOUR CODE - END  
         }
     }
 
@@ -99,62 +94,61 @@ public class GoGoScript : MonoBehaviour
         // Debug.Log(gogoz - threshhold);
     }
 
-    private void SelectObject(GameObject go)
+    private void SelectObject(GameObject collidedObject)
     {
-        selectedObject = go;
-        Vector3 lossySc = selectedObject.transform.lossyScale;
+        selectedObject = collidedObject;
+        Vector3 lossyScaleOfSelectedObject = selectedObject.transform.lossyScale;
 
-        selectedObject.transform.SetParent(rightHand.transform, false); // worldPositionStays = true
-        //Debug.Log("local sc" + rightHandColliderProxy.transform.localScale);
-        // Debug.Log("lossy sc" + rightHandColliderProxy.transform.lossyScale);
+        selectedObject.transform.SetParent(rightHand.transform, false);
 
-        Matrix4x4 mat_obj = newMatrixObject(go);
-        Matrix4x4 mat_hand = newMatrixHand();
-        Matrix4x4 mat_scene = newSceneMatrix();
+        Matrix4x4 mat_obj = newTranslationRotationScalingForSelectedObject(selectedObject);
+        Matrix4x4 mat_hand = newTranslationRotationScalingMatrixHand();
+        Matrix4x4 mat_scene = newTranslationRotationScalingMatrixScene();
 
-        Matrix4x4 mat_go = Matrix4x4.Inverse(mat_hand) * mat_scene * mat_obj;
+        Matrix4x4 mat_SelectedObject = Matrix4x4.Inverse(mat_hand) * mat_scene * mat_obj;
 
-        SetTransformByMatrix(go, mat_go);
+        SetTransformByMatrix(selectedObject, mat_SelectedObject);
 
-        go.transform.localScale = lossySc;
+        selectedObject.transform.localScale = lossyScaleOfSelectedObject;
         // Debug.Log("local sc a " + rightHandColliderProxy.transform.localScale);
         // Debug.Log("lossy sc a " + rightHandColliderProxy.transform.lossyScale);
-        // Debug.Log(go.transform.name + go.transform.parent + go.transform.position);
+        // Debug.Log(go.transform.name + go.transform.parent + selectedObject.transform.position);
     }
 
-    // TODO: FInd a better name for myObject
-    private Matrix4x4 newMatrixObject(GameObject myObject)
+    private Matrix4x4 newTranslationRotationScalingForSelectedObject(GameObject myObject)
     {
         Matrix4x4 mat_obj;
          return  mat_obj = Matrix4x4.TRS(myObject.transform.localPosition, myObject.transform.localRotation, myObject.transform.localScale);
     }
 
-    private Matrix4x4 newMatrixHand()
+    private Matrix4x4 newTranslationRotationScalingMatrixHand()
     {
         Matrix4x4 mat_hand = Matrix4x4.TRS(rightHand.transform.position, rightHand.transform.rotation, rightHand.transform.localScale);
         return mat_hand;
     }
 
-    private Matrix4x4 newSceneMatrix()
+    private Matrix4x4 newTranslationRotationScalingMatrixScene()
     {
         Matrix4x4 mat_scene = Matrix4x4.TRS(scene.transform.position, scene.transform.rotation, scene.transform.localScale);
         return mat_scene;
     }
 
+    /*
+     * DeselectObject sets parent to the selectedObject. Also it creates a new translation rotation sacling matrix for the selectedObject,
+     * hand by ther actual position, and scene.
+     * 
+     */
     private void DeselectObject()
     {
+        selectedObject.transform.SetParent(scene.transform, false);
 
-        selectedObject.transform.SetParent(scene.transform, false); // worldPositionStays = true
-
-        Matrix4x4 mat_obj = newMatrixObject(selectedObject);
-        Matrix4x4 mat_hand = newMatrixHand();
-        Matrix4x4 mat_scene = newSceneMatrix();
+        Matrix4x4 mat_obj = newTranslationRotationScalingForSelectedObject(selectedObject);
+        Matrix4x4 mat_hand = newTranslationRotationScalingMatrixHand();
+        Matrix4x4 mat_scene = newTranslationRotationScalingMatrixScene();
 
         Matrix4x4 mat_go = Matrix4x4.Inverse(mat_scene) * mat_hand * mat_obj;
 
         SetTransformByMatrix(selectedObject, mat_go);
-
-        // Debug.Log(selectedObject.transform.name + selectedObject.transform.parent + selectedObject.transform.position);
 
         selectedObject = null;
     }
