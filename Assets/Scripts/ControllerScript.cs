@@ -29,6 +29,8 @@ public class ControllerScript : MonoBehaviour
     private NavigationScript navigate;
     private InteractionScript interact;
     private GoGoScript gogo;
+    private FastGoGoScript gogoFast;
+    private StretchGoGoScript gogoStrech;
 
 
 
@@ -39,6 +41,8 @@ public class ControllerScript : MonoBehaviour
         navigate = GetComponent<NavigationScript>();
         interact = GetComponent<InteractionScript>();
         gogo = GetComponent<GoGoScript>();
+        gogoFast = GetComponent<FastGoGoScript>();
+        gogoStrech = GetComponent<StretchGoGoScript>();
 
 
         mainCamera = GameObject.Find("Main Camera");
@@ -97,11 +101,14 @@ public class ControllerScript : MonoBehaviour
     {
         if (grip > 0.1f)
         {
-            Debug.Log("Grip not implemented yet");
-            gogo.startGoGoHand();
+            if (gogo.isActiveAndEnabled) gogo.startGoGoHand();
+            if (gogoFast.isActiveAndEnabled) gogoFast.startGoGoHand();
+            if (gogoStrech.isActiveAndEnabled) gogoStrech.startGoGoHand();
         } else
         {
-            gogo.stopGoGoHand();
+            if (gogo.isActiveAndEnabled) gogo.stopGoGoHand();
+            if (gogoFast.isActiveAndEnabled) gogoFast.stopGoGoHand();
+            if (gogoStrech.isActiveAndEnabled) gogoStrech.stopGoGoHand();
         }      
     }
 
@@ -112,15 +119,8 @@ public class ControllerScript : MonoBehaviour
 
         if (trigger > 0.0f)
         {
-            // Debug.Log("Trigger Touched");
-            // 
-            select.showSelectionRay(rightHandController);// Doesn't exist anymore, should be select.startSelection
-            
-            
-            // 
+            if (select.isActiveAndEnabled) select.showSelectionRay(rightHandController);
         }
-        // Maybe I have to disable the SelectionRay again
-
     }
 
     /* controllJoystick controls the steering navigation.
