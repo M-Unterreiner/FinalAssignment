@@ -41,19 +41,23 @@ public class HomerScript : MonoBehaviour
     private void Update()
     {
         // Debug.Log("Does hand collide: " + handDetector.collided);
-        Debug.Log("Position hand: " + hand.transform.position + "Collider "+ handDetector.transform.position);
+        //Debug.Log("Position hand: " + hand.transform.position + "Collider "+ handDetector.transform.position);
         checkHandCollition();
     }
 
     private void OnDisable()
     {
         mySelectionRay.disableRay();
+        handColliderProxy.GetComponent<BoxCollider>().enabled = false;
+        handColliderProxy.SetActive(false);
         Debug.Log("HomerScript was disabled");
     }
 
     private void OnEnable()
     {
         mySelectionRay.enableRay();
+        handColliderProxy.GetComponent<BoxCollider>().enabled = true;
+        handColliderProxy.SetActive(true);
         Debug.Log("HomerScript was enabled");
     }
 
@@ -83,9 +87,12 @@ public class HomerScript : MonoBehaviour
     {
         if(lastSelectedObject != null)
         {
-            Debug.Log("Grab Object: " + lastSelectedObject);
-            if (!handDetector.collided)
+
+            moveHandToObject(hand, handCenter);           
+            // Debug.Log("Grab Object: " + lastSelectedObject);
+            if (handDetector.collided == true)
             {
+                Debug.Log("Collided Object: " + handDetector.collidedObject.name);
                 moveHandToObject(hand, handCenter);
             }
 
@@ -104,14 +111,15 @@ public class HomerScript : MonoBehaviour
     }
 
     public void moveHandToObject(GameObject hand, GameObject handCenter)
-    {
-        hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 5.0f * Time.deltaTime);
+    {   
+        if (!handDetector.collided)
+        {
+            Debug.Log("Hand is not collided.");
+            checkHandCollition();
+            hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 5.0f * Time.deltaTime);
+        } else
+        {
+            Debug.Log("Hand collided with: " + handDetector.collidedObject.name);
+        }
     }
-
-
-
-
-
-
-
 }
