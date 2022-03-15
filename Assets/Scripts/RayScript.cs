@@ -16,6 +16,7 @@ public class RayScript : MonoBehaviour
 
     private GameObject rayHandController = null;
     private XRController rayXRController = null;
+    private object hitData;
 
     public void enableRay()
     {
@@ -53,7 +54,7 @@ public class RayScript : MonoBehaviour
 
         UpdateRayVisualization(trigger, 0.00001f);
 
-        return null;
+        return hittedByRayCast.transform.gameObject;
     }
 
     /*
@@ -158,6 +159,11 @@ public class RayScript : MonoBehaviour
         rayIntersectionSphere.SetActive(false);
 
         //Debug.Log("RayIntersectionSphere created");
+    }
+
+    public void getHittedObject()
+    {
+       
     }
 
 }

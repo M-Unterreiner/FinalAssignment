@@ -50,8 +50,9 @@ public class HomerScript : MonoBehaviour
         mySelectionRay.showRay(HandController);
     }
 
-    public GameObject SelectByHitRay()
+    public GameObject SelectByHitRay(GameObject HandController)
     {
+        Debug.Log(mySelectionRay.showRay(HandController));
         return null;
     }
 
