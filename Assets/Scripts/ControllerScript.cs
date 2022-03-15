@@ -120,7 +120,7 @@ public class ControllerScript : MonoBehaviour
         if (trigger > 0.0f)
         {
             //if (homer.isActiveAndEnabled) homer.showSelectionRay(rightHandController);
-            if (homer.isActiveAndEnabled) homer.SelectByHitRay(rightHandController);
+            if (homer.isActiveAndEnabled) homer.selectByHitRay(rightHandController);
         }
     }
 
