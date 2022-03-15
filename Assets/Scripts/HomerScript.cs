@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 
 
-public class SelectionScript : MonoBehaviour
+public class HomerScript : MonoBehaviour
 {
     private LineRenderer SelectionRayRenderer;
 
@@ -25,13 +25,13 @@ public class SelectionScript : MonoBehaviour
     private void OnDisable()
     {
         mySelectionRay.disableRay();
-        Debug.Log("SelectionScript was disabled");
+        Debug.Log("HomerScript was disabled");
     }
 
     private void OnEnable()
     {
         mySelectionRay.enableRay();
-        Debug.Log("SelectionScript was enabled");
+        Debug.Log("HomerScript was enabled");
     }
 
     /*
@@ -39,7 +39,7 @@ public class SelectionScript : MonoBehaviour
      */
     public LineRenderer createSelectionWithRay(LineRenderer RayRenderer, GameObject HandController, XRController HandXRController)
     {
-        mySelectionRay = new RayScript(RayRenderer, HandController, HandXRController, "SelectionRay");
+        mySelectionRay = new RayScript(RayRenderer, HandController, HandXRController, "HomerScript");
         //Debug.Log("RayRenderer created");
 
         return SelectionRayRenderer;

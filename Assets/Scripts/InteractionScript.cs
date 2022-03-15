@@ -11,7 +11,7 @@ public class InteractionScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        techniques.Add(GetComponent<SelectionScript>());
+        techniques.Add(GetComponent<HomerScript>());
         techniques.Add(GetComponent<GoGoScript>());
         techniques.Add(GetComponent<FastGoGoScript>());
         techniques.Add(GetComponent<StretchGoGoScript>());

@@ -25,7 +25,7 @@ public class ControllerScript : MonoBehaviour
     // QUESTION: Is this LineRenderer clean code? Because the Controller shouldn't be interested 
     private LineRenderer rightRayRenderer = null;
 
-    private SelectionScript select;
+    private HomerScript homer;
     private NavigationScript navigate;
     private InteractionScript interact;
     private GoGoScript gogo;
@@ -37,7 +37,7 @@ public class ControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        select = GetComponent<SelectionScript>();
+        homer = GetComponent<HomerScript>();
         navigate = GetComponent<NavigationScript>();
         interact = GetComponent<InteractionScript>();
         gogo = GetComponent<GoGoScript>();
@@ -58,7 +58,7 @@ public class ControllerScript : MonoBehaviour
 
             rightRayRenderer = rightHandController.AddComponent<LineRenderer>();
             rightXRController = rightHandController.GetComponent<XRController>();
-            rightRayRenderer = select.createSelectionWithRay(rightRayRenderer, rightHandController, rightXRController);
+            rightRayRenderer = homer.createSelectionWithRay(rightRayRenderer, rightHandController, rightXRController);
         }   
     }
 
@@ -119,7 +119,7 @@ public class ControllerScript : MonoBehaviour
 
         if (trigger > 0.0f)
         {
-            if (select.isActiveAndEnabled) select.showSelectionRay(rightHandController);
+            if (homer.isActiveAndEnabled) homer.showSelectionRay(rightHandController);
         }
     }
 
