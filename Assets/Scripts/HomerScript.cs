@@ -13,6 +13,7 @@ public class HomerScript : MonoBehaviour
     public LayerMask myLayerMask;
 
     private RayScript mySelectionRay;
+    private GameObject lastSelectedObject = null;
 
    
 
@@ -50,15 +51,29 @@ public class HomerScript : MonoBehaviour
         mySelectionRay.showRay(HandController);
     }
 
-    public GameObject SelectByHitRay(GameObject HandController)
+    public void selectByHitRay(GameObject HandController)
     {
         Debug.Log(mySelectionRay.showRay(HandController));
-        return null;
+
+        lastSelectedObject = mySelectionRay.showRay(HandController);
     }
 
-    
+    public void grabHomer()
+    {
+        if(lastSelectedObject != null)
+        {
+            Debug.Log("Grab Object: " + lastSelectedObject);
+        }
+    }
 
-   
+    public void deGrabHomer()
+    {
+        Debug.Log("deGrabbing not yet implemented");
+    }
+
+
+
+
 
 
 

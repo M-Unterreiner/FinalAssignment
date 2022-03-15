@@ -54,7 +54,15 @@ public class RayScript : MonoBehaviour
 
         UpdateRayVisualization(trigger, 0.00001f);
 
-        return hittedByRayCast.transform.gameObject;
+        if (hittedByRayCast.transform.gameObject != null)
+        {
+            return hittedByRayCast.transform.gameObject;
+        } else
+        {
+            return null;
+        }
+ 
+        
     }
 
     /*
@@ -99,6 +107,7 @@ public class RayScript : MonoBehaviour
         else
         {
             disableRayIntersectionSphere();
+            createEmptyHittedRayCast();
         }
     }
     private void disableHitpoint()
@@ -124,6 +133,7 @@ public class RayScript : MonoBehaviour
         else
         {
             // Debug.Log("hitsRaycast false");
+            createEmptyHittedRayCast();
             return false;
         }
 
@@ -161,9 +171,9 @@ public class RayScript : MonoBehaviour
         //Debug.Log("RayIntersectionSphere created");
     }
 
-    public void getHittedObject()
+    public void createEmptyHittedRayCast()
     {
-       
+        hittedByRayCast = new RaycastHit();
     }
 
 }
