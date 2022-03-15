@@ -40,9 +40,7 @@ public class HomerScript : MonoBehaviour
 
     private void Update()
     {
-        // Debug.Log("Does hand collide: " + handDetector.collided);
-        //Debug.Log("Position hand: " + hand.transform.position + "Collider "+ handDetector.transform.position);
-        checkHandCollition();
+        refreshHandColliderPosition();
     }
 
     private void OnDisable()
@@ -85,22 +83,15 @@ public class HomerScript : MonoBehaviour
 
     public void grabHomer()
     {
-        if(lastSelectedObject != null)
+        
+        if (!handDetector.collided)
         {
-
-            moveHandToObject(hand, handCenter);           
-            // Debug.Log("Grab Object: " + lastSelectedObject);
-            if (handDetector.collided == true)
-            {
-                Debug.Log("Collided Object: " + handDetector.collidedObject.name);
-                moveHandToObject(hand, handCenter);
-            }
-
+            moveHandToObject(hand, handCenter);
         }
     }
 
-    public void checkHandCollition()
-    {
+    public void refreshHandColliderPosition()
+    {        
         handColliderProxy.transform.localPosition = hand.transform.localPosition;
     }
 
@@ -111,15 +102,7 @@ public class HomerScript : MonoBehaviour
     }
 
     public void moveHandToObject(GameObject hand, GameObject handCenter)
-    {   
-        if (!handDetector.collided)
-        {
-            Debug.Log("Hand is not collided.");
-            checkHandCollition();
-            hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 5.0f * Time.deltaTime);
-        } else
-        {
-            Debug.Log("Hand collided with: " + handDetector.collidedObject.name);
-        }
+    {
+        hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
     }
 }
