@@ -184,7 +184,8 @@ public class ControllerScript : MonoBehaviour
             if (secondaryButton) // up (0->1)
             {
                 // Debug.Log("Secondary Button pushed");
-                navigate.ResetXRRig();                
+                navigate.ResetXRRig();
+                homer.deGrabHomer();
             }
         }
         secondaryButtonLF = secondaryButton;
