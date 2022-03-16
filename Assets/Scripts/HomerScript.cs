@@ -131,8 +131,8 @@ public class HomerScript : MonoBehaviour
     private void grabObject(GameObject collidedObject)
     {
         setGrabbedObjectHandPosition(collidedObject.transform.position);
-        //changeParentOfHand(grabbedObjectHandPosition);
-        //Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+        changeParentOfHand(grabbedObjectHandPosition);
+        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
     }
 
     private void setGrabbedObjectHandPosition(Vector3 newHandPosition)
