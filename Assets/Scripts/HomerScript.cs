@@ -24,10 +24,10 @@ public class HomerScript : MonoBehaviour
     private CollisionDetectorScript handDetector;
     private GameObject handColliderProxy;
 
-    private GameObject selectedObject;
-    private Vector3 positionOnHandCollision;
+    private GameObject selectedObject = new GameObject();
+    private Vector3 handPositionOnCollision;
 
-    private GameObject grabbedObjectHandPosition;
+    private GameObject newHandCenterNode;
 
     void Awake()
     {
@@ -39,8 +39,8 @@ public class HomerScript : MonoBehaviour
         handXRController = handController.GetComponent<XRController>();
         hand = transform.Find("Camera Offset/RightHand Controller/HandRight").gameObject;
         handCenter = transform.Find("Camera Offset/RightHand Controller/RightHandCenter").gameObject;
-        
 
+        newHandCenterNode = GameObject.Find("NewHandCenterNode");
         handColliderProxy = GameObject.Find("HandColliderProxy");
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
     }
@@ -97,6 +97,7 @@ public class HomerScript : MonoBehaviour
             moveHandToObject(hand, handCenter);
         } else
         {
+            Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             grabObject(handDetector.collidedObject);
         }
     }
@@ -109,7 +110,7 @@ public class HomerScript : MonoBehaviour
         handColliderProxy.transform.localPosition = hand.transform.localPosition;
         if (handDetector.collided)
         {
-            positionOnHandCollision = hand.transform.localPosition;
+            handPositionOnCollision = hand.transform.position;
         }
     }
 
@@ -117,6 +118,8 @@ public class HomerScript : MonoBehaviour
     {
         // Set Hand back to position of Controller, would be nicer if hand moves back
         hand.transform.position = handController.transform.position;
+        setNewHomerHandPosition(new Vector3(70.28f,22.27f,37.78f));
+        changeParentOfHandTo(handController);
 
     }
 
@@ -130,20 +133,30 @@ public class HomerScript : MonoBehaviour
     */
     private void grabObject(GameObject collidedObject)
     {
-        setGrabbedObjectHandPosition(collidedObject.transform.position);
-        changeParentOfHand(grabbedObjectHandPosition);
-        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+        setNewHomerHandPosition(handPositionOnCollision);
+        changeParentOfHandTo(newHandCenterNode);
+        
+        resetCollidedObject();        
     }
 
-    private void setGrabbedObjectHandPosition(Vector3 newHandPosition)
+    private void setNewHomerHandPosition(Vector3 newPosition)
     {
-        grabbedObjectHandPosition.transform.position = newHandPosition;
+        newHandCenterNode.transform.position = newPosition;
     }
 
-    private void changeParentOfHand(GameObject newParentOfHand)
+    private void changeParentOfHandTo(GameObject newParentOfHand)
     {
         hand.transform.SetParent(newParentOfHand.transform, false);
-
-        // Set new TranslationMatrix???
+        handCenter.transform.SetParent(newParentOfHand.transform,false);
+        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+        Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
     }
+
+    private void resetCollidedObject()
+    {
+        handDetector.collided = false;
+        handDetector.collidedObject = null;
+        Debug.Log("Resetted handDetector");
+    }
+
 }
