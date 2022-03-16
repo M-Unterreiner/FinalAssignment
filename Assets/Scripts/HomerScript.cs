@@ -182,7 +182,6 @@ public class HomerScript : MonoBehaviour
 
         Matrix4x4 mat_newHandCenter = /*Matrix4x4.Inverse(mat_newCenter) * */ mat_hand;
         SetTransformByMatrix(hand, mat_newHandCenter);
-        setHandnewCenterFlag(false);
     }
 
     void SetTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
