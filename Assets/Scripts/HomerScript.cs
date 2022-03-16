@@ -27,6 +27,7 @@ public class HomerScript : MonoBehaviour
     private GameObject selectedObject = new GameObject();
     private Vector3 handPositionOnCollision;
 
+    Vector3 initialHandPosition;
     private GameObject newHandCenterNode;
 
     void Awake()
@@ -43,6 +44,8 @@ public class HomerScript : MonoBehaviour
         newHandCenterNode = GameObject.Find("NewHandCenterNode");
         handColliderProxy = GameObject.Find("HandColliderProxy");
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
+
+        initialHandPosition = handController.transform.position;
     }
 
     private void Update()
@@ -118,7 +121,7 @@ public class HomerScript : MonoBehaviour
     {
         // Set Hand back to position of Controller, would be nicer if hand moves back
         hand.transform.position = handController.transform.position;
-        setNewHomerHandPosition(new Vector3(70.28f,22.27f,37.78f));
+        setNewHandCenterNodePosition(initialHandPosition);
         changeParentOfHandTo(handController);
 
     }
@@ -133,13 +136,13 @@ public class HomerScript : MonoBehaviour
     */
     private void grabObject(GameObject collidedObject)
     {
-        setNewHomerHandPosition(handPositionOnCollision);
+        setNewHandCenterNodePosition(handPositionOnCollision);
         changeParentOfHandTo(newHandCenterNode);
         
         resetCollidedObject();        
     }
 
-    private void setNewHomerHandPosition(Vector3 newPosition)
+    private void setNewHandCenterNodePosition(Vector3 newPosition)
     {
         newHandCenterNode.transform.position = newPosition;
     }
@@ -158,5 +161,7 @@ public class HomerScript : MonoBehaviour
         handDetector.collidedObject = null;
         Debug.Log("Resetted handDetector");
     }
+
+
 
 }
