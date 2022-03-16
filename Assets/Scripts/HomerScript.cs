@@ -29,6 +29,7 @@ public class HomerScript : MonoBehaviour
 
     Vector3 initialHandPosition;
     private GameObject newHandCenterNode;
+    bool isNewHandCenterInUse = false;
 
     void Awake()
     {
@@ -51,6 +52,7 @@ public class HomerScript : MonoBehaviour
     private void Update()
     {
         refreshHandColliderPosition();
+        if (isNewHandCenterInUse) addMatrixtoHand();
     }
 
     private void OnDisable()
@@ -101,6 +103,7 @@ public class HomerScript : MonoBehaviour
         } else
         {
             Debug.Log("Collided Object: " + handDetector.collidedObject.name);
+            setHandnewCenterFlag(true);
             grabObject(handDetector.collidedObject);
         }
     }
@@ -123,7 +126,7 @@ public class HomerScript : MonoBehaviour
         hand.transform.position = handController.transform.position;
         setNewHandCenterNodePosition(initialHandPosition);
         changeParentOfHandTo(handController);
-
+        setHandnewCenterFlag(false);
     }
 
     public void moveHandToObject(GameObject hand, GameObject handCenter)
@@ -137,7 +140,7 @@ public class HomerScript : MonoBehaviour
     private void grabObject(GameObject collidedObject)
     {
         setNewHandCenterNodePosition(handPositionOnCollision);
-        changeParentOfHandTo(newHandCenterNode);
+        //changeParentOfHandTo(newHandCenterNode);
         
         resetCollidedObject();        
     }
@@ -162,6 +165,30 @@ public class HomerScript : MonoBehaviour
         Debug.Log("Resetted handDetector");
     }
 
+    private void setHandnewCenterFlag(bool set)
+    {
+        isNewHandCenterInUse = set;
+    }
+    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
+    {
+        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
+        return mat_hand;
+    }
 
+    private void addMatrixtoHand()
+    {
+        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
+        Matrix4x4 mat_newCenter = newTranslationRotationScalingMatrix(newHandCenterNode);
 
+        Matrix4x4 mat_newHandCenter = /*Matrix4x4.Inverse(mat_newCenter) * */ mat_hand;
+        SetTransformByMatrix(hand, mat_newHandCenter);
+        setHandnewCenterFlag(false);
+    }
+
+    void SetTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
+    {
+        go.transform.localPosition = mat.GetColumn(3);
+        go.transform.localRotation = mat.rotation;
+        //go.transform.localScale = mat.lossyScale;
+    }
 }
