@@ -139,4 +139,11 @@ public class HomerScript : MonoBehaviour
     {
         grabbedObjectHandPosition.transform.position = newHandPosition;
     }
+
+    private void changeParentOfHand(GameObject newParentOfHand)
+    {
+        hand.transform.SetParent(newParentOfHand.transform, false);
+
+        // Set new TranslationMatrix???
+    }
 }
