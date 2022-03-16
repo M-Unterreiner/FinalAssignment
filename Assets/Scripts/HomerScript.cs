@@ -27,6 +27,8 @@ public class HomerScript : MonoBehaviour
     private GameObject selectedObject;
     private Vector3 positionOnHandCollision;
 
+    private GameObject grabbedObjectHandPosition;
+
     void Awake()
     {
         mySelectionRay = GetComponent<RayScript>();
@@ -95,7 +97,7 @@ public class HomerScript : MonoBehaviour
             moveHandToObject(hand, handCenter);
         } else
         {
-            //SelectObject(handDetector.collidedObject);
+            grabObject(handDetector.collidedObject);
         }
     }
 
@@ -123,4 +125,13 @@ public class HomerScript : MonoBehaviour
         hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
     }
 
+    /*
+    * GrabObjects sets new position to the virtual hand.
+    */
+    private void grabObject(GameObject collidedObject)
+    {
+        //setGrabbedObjectHandPosition(collidedObject.transform.position);
+        //changeParentOfHand(grabbedObjectHandPosition);
+        //Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+    }
 }
