@@ -68,7 +68,7 @@ public class HomerScript : MonoBehaviour
         mySelectionRay.disableRay();
         handColliderProxy.GetComponent<BoxCollider>().enabled = false;
         handColliderProxy.SetActive(false);
-        Debug.Log("HomerScript was disabled");
+        // Debug.Log("HomerScript was disabled");
     }
 
     private void OnEnable()
@@ -117,6 +117,7 @@ public class HomerScript : MonoBehaviour
         } else
         {
             Debug.Log("Collided Object: " + handDetector.collidedObject.name);
+            setNewHandCenterNodePosition(handPositionOnCollision);
             setHandnewCenterFlag(true);
             resetHandPosition();
             grabObject(handDetector.collidedObject);
@@ -176,7 +177,7 @@ public class HomerScript : MonoBehaviour
             Debug.Log("lastSelectedObjectIsEmpty");
         } else
         {
-            hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
+            hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 5f * Time.deltaTime);
         }        
     }
 
@@ -190,7 +191,9 @@ public class HomerScript : MonoBehaviour
     */
     private void grabObject(GameObject collidedObject)
     {
+        Vector3 oldPosition = newHandCenterNode.transform.position;
         setNewHandCenterNodePosition(handPositionOnCollision);
+        Debug.Log("Set NewHandCenterNodePosition from: " + oldPosition + " to " + newHandCenterNode.transform.position);
         changeParentOfHandControllerTo(newHandCenterNode);
         
         resetCollidedObject();
@@ -206,14 +209,14 @@ public class HomerScript : MonoBehaviour
     {
         handDetector.collided = false;
         handDetector.collidedObject = null;
-        Debug.Log("Resetted handDetector");
+        // Debug.Log("Resetted handDetector");
     }
     private void changeParentOfHandControllerTo(GameObject newParentOfHand)
     {
         handController.transform.SetParent(newParentOfHand.transform, true);
         //handCenter.transform.SetParent(newParentOfHand.transform, false);
         Debug.Log("New Parent of hand: " + hand.transform.parent.name);
-        Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
+        //Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
     }
 
     private void setHandnewCenterFlag(bool set)
@@ -225,7 +228,7 @@ public class HomerScript : MonoBehaviour
     {
         lastSelectedObjectIsEmptyFlag = true;
         lastSelectedObject = emptyGameObject;
-        Debug.Log("Resetted lastSelectedObject: ");
+        //Debug.Log("Resetted lastSelectedObject: " + lastSelectedObjectIsEmptyFlag);
     }
 
     public void setLastSelectedObjectIsEmptyFlag(bool toStatus)
