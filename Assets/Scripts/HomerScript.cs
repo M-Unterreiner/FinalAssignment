@@ -176,6 +176,7 @@ public class HomerScript : MonoBehaviour
         setHandnewCenterFlagTo(false);
         resetCollidedObject();
         resetLastSelectedObject();
+        // resetScaling();
     }
 
     /*
@@ -226,7 +227,7 @@ public class HomerScript : MonoBehaviour
     private void changeParentOfHandControllerTo(GameObject newParentOfHand)
     {
         handController.transform.SetParent(newParentOfHand.transform, true);
-        correctScaling();
+        //correctScaling();
         //handCenter.transform.SetParent(newParentOfHand.transform, false);
         Debug.Log("New Parent of hand: " + hand.transform.parent.name);
         //Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
