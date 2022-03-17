@@ -97,13 +97,16 @@ public class HomerScript : MonoBehaviour
     public void selectByHitRay(GameObject HandController)
     {
         //Debug.Log(mySelectionRay.showRay(HandController));
-        lastSelectedObject = mySelectionRay.showRay(HandController);
-        setLastSelectedObjectIsEmptyFlag(false);
+        GameObject selectedGameObjectByHitRay = mySelectionRay.showRay(HandController);
+        if (selectedGameObjectByHitRay)
+        {
+            lastSelectedObject = selectedGameObjectByHitRay;
+            setLastSelectedObjectIsEmptyFlag(false);
+        }
     }
 
     public void grabHomer()
-    {
-        
+    {        
         if (!handDetector.collided)
         {
             moveHandToObject(hand, handCenter);
