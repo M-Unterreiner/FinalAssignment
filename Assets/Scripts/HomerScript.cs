@@ -34,6 +34,8 @@ public class HomerScript : MonoBehaviour
     private GameObject newHandCenterNode;
     bool isNewHandCenterInUse = false;
 
+    bool isGrabHomerFlagOn = false;
+
     void Awake()
     {
         mySelectionRay = GetComponent<RayScript>();
@@ -61,6 +63,12 @@ public class HomerScript : MonoBehaviour
     {
         refreshHandColliderPosition();
         //if (lastSelectedObjectIsEmptyFlag) Debug.Log("Last selected Object is empty.");
+
+        if (isGrabHomerFlagOn)
+        {
+            grabHomer();
+        }
+
     }
 
     private void OnDisable()
@@ -90,6 +98,11 @@ public class HomerScript : MonoBehaviour
         //Debug.Log("RayRenderer created");
 
         return SelectionRayRenderer;
+    }
+
+    public void setGrabHomerFlagTo(bool state)
+    {
+        isGrabHomerFlagOn = state;
     }
 
     public void showSelectionRay(GameObject HandController)

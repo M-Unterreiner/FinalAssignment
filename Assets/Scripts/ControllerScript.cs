@@ -104,13 +104,13 @@ public class ControllerScript : MonoBehaviour
             if (gogo.isActiveAndEnabled) gogo.startGoGoHand();
             if (gogoFast.isActiveAndEnabled) gogoFast.startGoGoHand();
             if (gogoStrech.isActiveAndEnabled) gogoStrech.startGoGoHand();
-            if (homer.isActiveAndEnabled) homer.grabHomer();
+            if (homer.isActiveAndEnabled) homer.setGrabHomerFlagTo(true);
         } else
         {
             if (gogo.isActiveAndEnabled) gogo.stopGoGoHand();
             if (gogoFast.isActiveAndEnabled) gogoFast.stopGoGoHand();
             if (gogoStrech.isActiveAndEnabled) gogoStrech.stopGoGoHand();
-            //if (homer.isActiveAndEnabled) homer.deGrabHomer();
+            if (homer.isActiveAndEnabled) homer.setGrabHomerFlagTo(false);
         }      
     }
 
