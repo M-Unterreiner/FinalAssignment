@@ -124,14 +124,14 @@ public class HomerScript : MonoBehaviour
 
     public void grabHomer()
     {        
-        if (!handDetector.collided)
+        if (!handDetector.collided && isNewHandCenterInUse == false)
         {
             moveHandToObject(hand, handCenter);
         } else
         {
-            Debug.Log("Collided Object: " + handDetector.collidedObject.name);
+            // Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             setNewHandCenterNodePosition(handPositionOnCollision);
-            setHandnewCenterFlag(true);
+            setHandnewCenterFlagTo(true);
             resetHandPosition();
             grabObject(handDetector.collidedObject);
             resetCollidedObject();
@@ -174,7 +174,7 @@ public class HomerScript : MonoBehaviour
         hand.transform.position = handController.transform.position;
         setNewHandCenterNodePosition(initialHandPosition);
         changeParentOfHandControllerTo(head);
-        setHandnewCenterFlag(false);
+        setHandnewCenterFlagTo(false);
         resetCollidedObject();
         resetLastSelectedObject();
     }
@@ -232,7 +232,7 @@ public class HomerScript : MonoBehaviour
         //Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
     }
 
-    private void setHandnewCenterFlag(bool set)
+    private void setHandnewCenterFlagTo(bool set)
     {
         isNewHandCenterInUse = set;
     }
