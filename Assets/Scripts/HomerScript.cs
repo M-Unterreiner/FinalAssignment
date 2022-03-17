@@ -18,6 +18,7 @@ public class HomerScript : MonoBehaviour
     private GameObject lastSelectedObject = null;
     private bool lastSelectedObjectIsEmptyFlag = true;
     private GameObject emptyGameObject = null;
+    private GameObject selectedObject;
 
     private GameObject head;
     private GameObject hand;
@@ -30,10 +31,12 @@ public class HomerScript : MonoBehaviour
 
     private Vector3 handPositionOnCollision;
     private GameObject initialHandPosition;
-    private GameObject newHandCenterNode;
-    bool isNewHandCenterInUse = false;
+    private GameObject newHandCenterNode;  
 
+    bool isNewHandCenterInUse = false;
     bool isGrabHomerFlagOn = false;
+
+
 
     void Awake()
     {
@@ -126,15 +129,18 @@ public class HomerScript : MonoBehaviour
         if (!handDetector.collided && isNewHandCenterInUse == false)
         {
             moveHandToObject(hand, handCenter);
-        } else
+        } else if (handDetector.collidedObject != null && isNewHandCenterInUse == true)
+        {
+            selectObject(handDetector.collidedObject);
+        }  else
         {
             // Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             setNewHandCenterNodePosition(handPositionOnCollision);
             setHandnewCenterFlagTo(true);
             resetHandPosition();
             grabObject(handDetector.collidedObject);
-            resetCollidedObject();
-            resetLastSelectedObject();
+            //resetCollidedObject();
+            //resetLastSelectedObject();
         }
     }
 
@@ -174,8 +180,8 @@ public class HomerScript : MonoBehaviour
         setNewHandCenterNodePosition(initialHandPosition.transform.position);
         changeParentOfHandControllerTo(head);
         setHandnewCenterFlagTo(false);
-        resetCollidedObject();
-        resetLastSelectedObject();
+        //resetCollidedObject();
+        //resetLastSelectedObject();
         // resetScaling();
     }
 
@@ -207,10 +213,11 @@ public class HomerScript : MonoBehaviour
         Vector3 oldPosition = newHandCenterNode.transform.position;
         setNewHandCenterNodePosition(handPositionOnCollision);
         // Debug.Log("Set NewHandCenterNodePosition from: " + oldPosition + " to " + newHandCenterNode.transform.position);
-        changeParentOfHandControllerTo(newHandCenterNode);
-        
-        resetCollidedObject();
-        resetLastSelectedObject();
+        changeParentOfHandControllerTo(newHandCenterNode);        
+        //resetCollidedObject();
+        //resetLastSelectedObject();
+
+
     }
 
     private void setNewHandCenterNodePosition(Vector3 newPosition)
@@ -229,7 +236,7 @@ public class HomerScript : MonoBehaviour
         handController.transform.SetParent(newParentOfHand.transform, true);
         //correctScaling();
         //handCenter.transform.SetParent(newParentOfHand.transform, false);
-        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+        //Debug.Log("New Parent of hand: " + hand.transform.parent.name);
         //Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
     }
 
@@ -262,5 +269,63 @@ public class HomerScript : MonoBehaviour
     public void resetScaling()
     {
         handController.transform.localScale = initialHandPosition.transform.localScale;
+    }
+
+    private void selectObject(GameObject collidedObject)
+    {
+        selectedObject = collidedObject;
+        Vector3 lossyScaleOfSelectedObject = selectedObject.transform.lossyScale;
+
+        selectedObject.transform.SetParent(hand.transform, false);
+
+        Matrix4x4 mat_obj = newLocalTranslationRotationScalingSelectedObject(selectedObject);
+        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
+        Matrix4x4 mat_scene = newTranslationRotationScalingMatrix(scene);
+
+        Matrix4x4 mat_SelectedObject = Matrix4x4.Inverse(mat_hand) * mat_scene * mat_obj;
+
+        setTransformByMatrix(selectedObject, mat_SelectedObject);
+
+        selectedObject.transform.localScale = lossyScaleOfSelectedObject;
+    }
+
+    /*
+ * DeselectObject sets parent to the selectedObject. Also it creates a new local translation rotation scaling matrix for the selectedObject and 
+ * hand by their actual position, and scene. At the end it sets the position to the selectedObjects.
+ * 
+ */
+    private void DeselectObject()
+    {
+        selectedObject.transform.SetParent(scene.transform, false);
+
+        Matrix4x4 mat_obj = newLocalTranslationRotationScalingSelectedObject(selectedObject);
+        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
+        Matrix4x4 mat_scene = newTranslationRotationScalingMatrix(scene);
+
+        // sets the position to the selectedObjects
+        Matrix4x4 mat_go = Matrix4x4.Inverse(mat_scene) * mat_hand * mat_obj;
+
+        setTransformByMatrix(selectedObject, mat_go);
+
+        selectedObject = null;
+    }
+
+    void setTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
+    {
+        go.transform.localPosition = mat.GetColumn(3);
+        go.transform.localRotation = mat.rotation;
+        go.transform.localScale = mat.lossyScale;
+    }
+
+    private Matrix4x4 newLocalTranslationRotationScalingSelectedObject(GameObject myObject)
+    {
+        Matrix4x4 mat_obj;
+        return mat_obj = Matrix4x4.TRS(myObject.transform.localPosition, myObject.transform.localRotation, myObject.transform.localScale);
+    }
+
+    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
+    {
+        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
+        return mat_hand;
     }
 }
