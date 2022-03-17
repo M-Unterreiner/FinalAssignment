@@ -27,7 +27,7 @@ public class HomerScript : MonoBehaviour
 
     private Vector3 handPositionOnCollision;
 
-    Vector3 initialHandPosition;
+    private Vector3 initialHandPosition;
     private GameObject newHandCenterNode;
     bool isNewHandCenterInUse = false;
 
@@ -106,7 +106,7 @@ public class HomerScript : MonoBehaviour
         {
             Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             setHandnewCenterFlag(true);
-            resetHandPoistion();
+            resetHandPosition();
             grabObject(handDetector.collidedObject);
 
         }
@@ -144,9 +144,9 @@ public class HomerScript : MonoBehaviour
         hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
     }
 
-    public void resetHandPoistion()
+    public void resetHandPosition()
     {
-        hand.transform.position = initialHandPosition;
+        hand.transform.position = handController.transform.position;
     }
 
     /*
