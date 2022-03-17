@@ -41,16 +41,18 @@ public class HomerScript : MonoBehaviour
 
         scene = GameObject.Find("Terrain");
         head = GameObject.Find("Camera Offset");
+        
         handController = GameObject.Find("RightHand Controller");
         handXRController = handController.GetComponent<XRController>();
         hand = transform.Find("Camera Offset/RightHand Controller/HandRight").gameObject;
         handCenter = transform.Find("Camera Offset/RightHand Controller/RightHandCenter").gameObject;
-
-        newHandCenterNode = GameObject.Find("NewHandCenterNode");
+       
         handColliderProxy = GameObject.Find("HandColliderProxy");
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
+        initialHandPosition = handCenter.transform.position;
 
-        initialHandPosition = handController.transform.position;
+        newHandCenterNode = GameObject.Find("NewHandCenterNode");
+        setNewHandCenterNodePosition(initialHandPosition);
 
         Debug.Log(initialHandPosition);
     }
@@ -71,6 +73,8 @@ public class HomerScript : MonoBehaviour
 
     private void OnEnable()
     {
+        initialHandPosition = handCenter.transform.position;
+        setNewHandCenterNodePosition(initialHandPosition);
         mySelectionRay.enableRay();
         handColliderProxy.GetComponent<BoxCollider>().enabled = true;
         handColliderProxy.SetActive(true);
@@ -147,7 +151,8 @@ public class HomerScript : MonoBehaviour
         resetLastSelectedObject();
         */
 
-        hand.transform.position = handController.transform.position;
+        //hand.transform.position = handController.transform.position;
+        hand.transform.position = newHandCenterNode.transform.position;
     }
 
     public void resetHomer()
