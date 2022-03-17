@@ -29,8 +29,7 @@ public class HomerScript : MonoBehaviour
     private GameObject handColliderProxy;
 
     private Vector3 handPositionOnCollision;
-
-    private Vector3 initialHandPosition;
+    private GameObject initialHandPosition;
     private GameObject newHandCenterNode;
     bool isNewHandCenterInUse = false;
 
@@ -51,10 +50,10 @@ public class HomerScript : MonoBehaviour
        
         handColliderProxy = GameObject.Find("HandColliderProxy");
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
-        initialHandPosition = handCenter.transform.position;
+        initialHandPosition = handCenter;
 
         newHandCenterNode = GameObject.Find("NewHandCenterNode");
-        setNewHandCenterNodePosition(initialHandPosition);
+        setNewHandCenterNodePosition(initialHandPosition.transform.position);
 
         Debug.Log(initialHandPosition);
     }
@@ -81,8 +80,8 @@ public class HomerScript : MonoBehaviour
 
     private void OnEnable()
     {
-        initialHandPosition = handCenter.transform.position;
-        setNewHandCenterNodePosition(initialHandPosition);
+        initialHandPosition.transform.position = handCenter.transform.position;
+        setNewHandCenterNodePosition(initialHandPosition.transform.position);
         mySelectionRay.enableRay();
         handColliderProxy.GetComponent<BoxCollider>().enabled = true;
         handColliderProxy.SetActive(true);
@@ -172,7 +171,7 @@ public class HomerScript : MonoBehaviour
     public void resetHomer()
     {
         hand.transform.position = handController.transform.position;
-        setNewHandCenterNodePosition(initialHandPosition);
+        setNewHandCenterNodePosition(initialHandPosition.transform.position);
         changeParentOfHandControllerTo(head);
         setHandnewCenterFlagTo(false);
         resetCollidedObject();
@@ -227,6 +226,7 @@ public class HomerScript : MonoBehaviour
     private void changeParentOfHandControllerTo(GameObject newParentOfHand)
     {
         handController.transform.SetParent(newParentOfHand.transform, true);
+        correctScaling();
         //handCenter.transform.SetParent(newParentOfHand.transform, false);
         Debug.Log("New Parent of hand: " + hand.transform.parent.name);
         //Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
@@ -249,5 +249,17 @@ public class HomerScript : MonoBehaviour
         lastSelectedObjectIsEmptyFlag = toStatus;
     }
 
+    public void correctScaling()
+    {
+        //Vector3 newHandCenterNodeScale = new Vector3(newHandCenterNode.transform.localScale.x, newHandCenterNode.transform.localScale.y, newHandCenterNode.transform.localScale.z);
+        //Vector3 handControllerScale = handController.transform.localScale;
+        //handController.transform.localScale = new Vector3(handControllerScale.x / newHandCenterNodeScale.x, handControllerScale.y / newHandCenterNodeScale.y, handControllerScale.z / newHandCenterNodeScale.z);
 
+        handController.transform.localScale = initialHandPosition.transform.lossyScale;
+    }
+
+    public void resetScaling()
+    {
+        handController.transform.localScale = initialHandPosition.transform.localScale;
+    }
 }
