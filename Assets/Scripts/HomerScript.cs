@@ -151,9 +151,11 @@ public class HomerScript : MonoBehaviour
         if (lastSelectedObjectIsEmptyFlag)
         {
             // Debug.Log("Move to lastSelectedObject: " + lastSelectedObject.name + " With Position: " + lastSelectedObject.transform.position);
+            Debug.Log("lastSelectedObjectIsEmpty");
+        } else
+        {
             hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
-        }
-        
+        }        
     }
 
     public void resetHandPosition()
