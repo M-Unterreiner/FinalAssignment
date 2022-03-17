@@ -18,7 +18,7 @@ public class HomerScript : MonoBehaviour
     private GameObject lastSelectedObject = null;
     private bool lastSelectedObjectIsEmptyFlag = true;
     private GameObject emptyGameObject = null;
-    private GameObject selectedObject;
+    private GameObject grabbedObject;
 
     private GameObject head;
     private GameObject hand;
@@ -35,6 +35,7 @@ public class HomerScript : MonoBehaviour
 
     bool isNewHandCenterInUse = false;
     bool isGrabHomerFlagOn = false;
+    bool isAnObjectGrabbed = false;
 
 
 
@@ -127,14 +128,14 @@ public class HomerScript : MonoBehaviour
     public void grabHomer()
     {
         Debug.Log("grabHomer. Collided:" + handDetector.collided + "HandCenterInUse: " + isNewHandCenterInUse);
-        if (!handDetector.collided && isNewHandCenterInUse == false)
+        if (!handDetector.collided && isNewHandCenterInUse == false && isAnObjectGrabbed == false)
         {
             moveHandToObject(hand, handCenter);
-        } else if (handDetector.collided && isNewHandCenterInUse == true)
+        } else if (handDetector.collided && isNewHandCenterInUse == true && isAnObjectGrabbed == false)
         {
             Debug.Log("Open selectObject?");
             selectObject(handDetector.collidedObject);
-        }  else if (handDetector.collided && isNewHandCenterInUse == false)
+        }  else if (handDetector.collided && isNewHandCenterInUse == false && isAnObjectGrabbed == false)
         {
             Debug.Log("Grab objectt?");
             // Debug.Log("Collided Object: " + handDetector.collidedObject.name);
@@ -144,6 +145,9 @@ public class HomerScript : MonoBehaviour
             grabObject(handDetector.collidedObject);
             //resetCollidedObject();
             //resetLastSelectedObject();
+        } else if(isAnObjectGrabbed == true)
+        {
+            DeselectObject();
         }
     }
 
@@ -276,20 +280,11 @@ public class HomerScript : MonoBehaviour
 
     private void selectObject(GameObject collidedObject)
     {
-        selectedObject = collidedObject;
-        Vector3 lossyScaleOfSelectedObject = selectedObject.transform.lossyScale;
+        Debug.Log("Try to grab object" + collidedObject.name);
+        grabbedObject = collidedObject;
+        grabbedObject.transform.SetParent(hand.transform, true);
+        setObjectGrabbedTo(true);
 
-        selectedObject.transform.SetParent(hand.transform, false);
-
-        Matrix4x4 mat_obj = newLocalTranslationRotationScalingSelectedObject(selectedObject);
-        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
-        Matrix4x4 mat_scene = newTranslationRotationScalingMatrix(scene);
-
-        Matrix4x4 mat_SelectedObject = Matrix4x4.Inverse(mat_hand) * mat_scene * mat_obj;
-
-        setTransformByMatrix(selectedObject, mat_SelectedObject);
-
-        selectedObject.transform.localScale = lossyScaleOfSelectedObject;
     }
 
     /*
@@ -299,36 +294,12 @@ public class HomerScript : MonoBehaviour
  */
     private void DeselectObject()
     {
-        selectedObject.transform.SetParent(scene.transform, false);
-
-        Matrix4x4 mat_obj = newLocalTranslationRotationScalingSelectedObject(selectedObject);
-        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
-        Matrix4x4 mat_scene = newTranslationRotationScalingMatrix(scene);
-
-        // sets the position to the selectedObjects
-        Matrix4x4 mat_go = Matrix4x4.Inverse(mat_scene) * mat_hand * mat_obj;
-
-        setTransformByMatrix(selectedObject, mat_go);
-
-        selectedObject = null;
+        grabbedObject.transform.SetParent(scene.transform, true);
+        setObjectGrabbedTo(false);
     }
 
-    void setTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
+    private void setObjectGrabbedTo(bool state)
     {
-        go.transform.localPosition = mat.GetColumn(3);
-        go.transform.localRotation = mat.rotation;
-        go.transform.localScale = mat.lossyScale;
-    }
-
-    private Matrix4x4 newLocalTranslationRotationScalingSelectedObject(GameObject myObject)
-    {
-        Matrix4x4 mat_obj;
-        return mat_obj = Matrix4x4.TRS(myObject.transform.localPosition, myObject.transform.localRotation, myObject.transform.localScale);
-    }
-
-    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
-    {
-        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
-        return mat_hand;
+        isAnObjectGrabbed = state;
     }
 }
