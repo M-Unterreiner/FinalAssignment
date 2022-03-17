@@ -60,7 +60,7 @@ public class HomerScript : MonoBehaviour
     private void Update()
     {
         refreshHandColliderPosition();
-        if (lastSelectedObjectIsEmptyFlag) Debug.Log("Last selected Object is empty.");
+        //if (lastSelectedObjectIsEmptyFlag) Debug.Log("Last selected Object is empty.");
     }
 
     private void OnDisable()
@@ -182,7 +182,7 @@ public class HomerScript : MonoBehaviour
 
     public void resetHandPosition()
     {
-        hand.transform.position = handController.transform.position;
+        hand.transform.position = newHandCenterNode.transform.position;
     }
 
     /*
