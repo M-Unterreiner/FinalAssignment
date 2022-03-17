@@ -48,12 +48,12 @@ public class HomerScript : MonoBehaviour
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
 
         initialHandPosition = handController.transform.position;
+        Debug.Log(initialHandPosition);
     }
 
     private void Update()
     {
         refreshHandColliderPosition();
-        if (isNewHandCenterInUse) addMatrixtoHand();
         Debug.Log(head.name);
     }
 
@@ -106,7 +106,9 @@ public class HomerScript : MonoBehaviour
         {
             Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             setHandnewCenterFlag(true);
+            resetHandPoistion();
             grabObject(handDetector.collidedObject);
+
         }
     }
 
@@ -130,7 +132,7 @@ public class HomerScript : MonoBehaviour
         // Set Hand back to position of Controller, would be nicer if hand moves back
         hand.transform.position = handController.transform.position;
         setNewHandCenterNodePosition(initialHandPosition);
-        changeParentOfHandTo(head);
+        changeParentOfHandControllerTo(head);
         setHandnewCenterFlag(false);
     }
 
@@ -142,13 +144,18 @@ public class HomerScript : MonoBehaviour
         hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
     }
 
+    public void resetHandPoistion()
+    {
+        hand.transform.position = initialHandPosition;
+    }
+
     /*
     * GrabObjects sets new position to the virtual hand and resets CollidedObject.
     */
     private void grabObject(GameObject collidedObject)
     {
         setNewHandCenterNodePosition(handPositionOnCollision);
-        changeParentOfHandTo(newHandCenterNode);
+        changeParentOfHandControllerTo(newHandCenterNode);
         
         resetCollidedObject();        
     }
@@ -164,7 +171,7 @@ public class HomerScript : MonoBehaviour
         handDetector.collidedObject = null;
         Debug.Log("Resetted handDetector");
     }
-    private void changeParentOfHandTo(GameObject newParentOfHand)
+    private void changeParentOfHandControllerTo(GameObject newParentOfHand)
     {
         handController.transform.SetParent(newParentOfHand.transform, true);
         //handCenter.transform.SetParent(newParentOfHand.transform, false);
@@ -176,28 +183,4 @@ public class HomerScript : MonoBehaviour
     {
         isNewHandCenterInUse = set;
     }
-
-    private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
-    {
-        Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
-        return mat_hand;
-    }
-
-    private void addMatrixtoHand()
-    {
-        Matrix4x4 mat_hand = newTranslationRotationScalingMatrix(hand);
-        Matrix4x4 mat_newCenter = newTranslationRotationScalingMatrix(newHandCenterNode);
-
-        Matrix4x4 mat_newHandCenter = /*Matrix4x4.Inverse(mat_newCenter) * */ mat_hand;
-        SetTransformByMatrix(hand, mat_newHandCenter);
-    }
-
-    void SetTransformByMatrix(GameObject go, Matrix4x4 mat) // helper function
-    {
-        go.transform.localPosition = mat.GetColumn(3);
-        go.transform.localRotation = mat.rotation;
-        //go.transform.localScale = mat.lossyScale;
-    }
-
-
 }
