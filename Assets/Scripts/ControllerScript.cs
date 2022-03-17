@@ -110,7 +110,7 @@ public class ControllerScript : MonoBehaviour
             if (gogo.isActiveAndEnabled) gogo.stopGoGoHand();
             if (gogoFast.isActiveAndEnabled) gogoFast.stopGoGoHand();
             if (gogoStrech.isActiveAndEnabled) gogoStrech.stopGoGoHand();
-            // if (homer.isActiveAndEnabled) homer.deGrabHomer();
+            if (homer.isActiveAndEnabled) homer.deGrabHomer();
         }      
     }
 
@@ -185,7 +185,7 @@ public class ControllerScript : MonoBehaviour
             {
                 // Debug.Log("Secondary Button pushed");
                 navigate.ResetXRRig();
-                homer.deGrabHomer();
+                homer.resetHomer();
             }
         }
         secondaryButtonLF = secondaryButton;

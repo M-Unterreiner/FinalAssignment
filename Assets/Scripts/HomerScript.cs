@@ -51,6 +51,7 @@ public class HomerScript : MonoBehaviour
         handDetector = handColliderProxy.GetComponent<CollisionDetectorScript>();
 
         initialHandPosition = handController.transform.position;
+
         Debug.Log(initialHandPosition);
     }
 
@@ -135,6 +136,19 @@ public class HomerScript : MonoBehaviour
     public void deGrabHomer()
     {
         // Set Hand back to position of Controller, would be nicer if hand moves back
+        /*
+        setNewHandCenterNodePosition(initialHandPosition);
+        changeParentOfHandControllerTo(head);
+        setHandnewCenterFlag(false);
+        resetCollidedObject();
+        resetLastSelectedObject();
+        */
+
+        hand.transform.position = handController.transform.position;
+    }
+
+    public void resetHomer()
+    {
         hand.transform.position = handController.transform.position;
         setNewHandCenterNodePosition(initialHandPosition);
         changeParentOfHandControllerTo(head);
