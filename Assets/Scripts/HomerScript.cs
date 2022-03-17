@@ -36,6 +36,7 @@ public class HomerScript : MonoBehaviour
     bool isNewHandCenterInUse = false;
     bool isGrabHomerFlagOn = false;
     bool isAnObjectGrabbed = false;
+    bool isGrabHomerActive = false;
 
 
 
@@ -70,6 +71,9 @@ public class HomerScript : MonoBehaviour
         if (isGrabHomerFlagOn)
         {
             grabHomer();
+        } else
+        {
+            deGrabHomer();
         }
 
     }
@@ -223,8 +227,6 @@ public class HomerScript : MonoBehaviour
         changeParentOfHandControllerTo(newHandCenterNode);        
         //resetCollidedObject();
         //resetLastSelectedObject();
-
-
     }
 
     private void setNewHandCenterNodePosition(Vector3 newPosition)
@@ -284,7 +286,6 @@ public class HomerScript : MonoBehaviour
         grabbedObject = collidedObject;
         grabbedObject.transform.SetParent(hand.transform, true);
         setObjectGrabbedTo(true);
-
     }
 
     /*
