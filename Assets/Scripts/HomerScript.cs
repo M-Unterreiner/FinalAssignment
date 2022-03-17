@@ -196,7 +196,7 @@ public class HomerScript : MonoBehaviour
 
     public void resetHandPosition()
     {
-        hand.transform.position = newHandCenterNode.transform.position;
+        hand.transform.position = handController.transform.position;
     }
 
     /*
