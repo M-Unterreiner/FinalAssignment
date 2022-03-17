@@ -206,7 +206,7 @@ public class HomerScript : MonoBehaviour
     {
         Vector3 oldPosition = newHandCenterNode.transform.position;
         setNewHandCenterNodePosition(handPositionOnCollision);
-        Debug.Log("Set NewHandCenterNodePosition from: " + oldPosition + " to " + newHandCenterNode.transform.position);
+        // Debug.Log("Set NewHandCenterNodePosition from: " + oldPosition + " to " + newHandCenterNode.transform.position);
         changeParentOfHandControllerTo(newHandCenterNode);
         
         resetCollidedObject();
