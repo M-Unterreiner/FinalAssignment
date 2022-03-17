@@ -16,6 +16,7 @@ public class HomerScript : MonoBehaviour
     private RayScript mySelectionRay;
     private GameObject lastSelectedObject = null;
 
+    private GameObject head;
     private GameObject hand;
     private GameObject handController;
     private GameObject handCenter;
@@ -24,7 +25,6 @@ public class HomerScript : MonoBehaviour
     private CollisionDetectorScript handDetector;
     private GameObject handColliderProxy;
 
-    private GameObject selectedObject = new GameObject();
     private Vector3 handPositionOnCollision;
 
     Vector3 initialHandPosition;
@@ -37,6 +37,7 @@ public class HomerScript : MonoBehaviour
         mySelectionRay.enableRay();
 
         scene = GameObject.Find("Terrain");
+        head = GameObject.Find("Camera Offset");
         handController = GameObject.Find("RightHand Controller");
         handXRController = handController.GetComponent<XRController>();
         hand = transform.Find("Camera Offset/RightHand Controller/HandRight").gameObject;
@@ -53,6 +54,7 @@ public class HomerScript : MonoBehaviour
     {
         refreshHandColliderPosition();
         if (isNewHandCenterInUse) addMatrixtoHand();
+        Debug.Log(head.name);
     }
 
     private void OnDisable()
@@ -120,27 +122,33 @@ public class HomerScript : MonoBehaviour
         }
     }
 
+    /*
+     * Sets hand position back to handController position, change parten to handcontroller 
+     */
     public void deGrabHomer()
     {
         // Set Hand back to position of Controller, would be nicer if hand moves back
         hand.transform.position = handController.transform.position;
         setNewHandCenterNodePosition(initialHandPosition);
-        changeParentOfHandTo(handController);
+        changeParentOfHandTo(head);
         setHandnewCenterFlag(false);
     }
 
+    /*
+     * Moves Hand to object position.
+     */
     public void moveHandToObject(GameObject hand, GameObject handCenter)
     {
         hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
     }
 
     /*
-    * GrabObjects sets new position to the virtual hand.
+    * GrabObjects sets new position to the virtual hand and resets CollidedObject.
     */
     private void grabObject(GameObject collidedObject)
     {
         setNewHandCenterNodePosition(handPositionOnCollision);
-        //changeParentOfHandTo(newHandCenterNode);
+        changeParentOfHandTo(newHandCenterNode);
         
         resetCollidedObject();        
     }
@@ -150,25 +158,25 @@ public class HomerScript : MonoBehaviour
         newHandCenterNode.transform.position = newPosition;
     }
 
-    private void changeParentOfHandTo(GameObject newParentOfHand)
-    {
-        hand.transform.SetParent(newParentOfHand.transform, false);
-        handCenter.transform.SetParent(newParentOfHand.transform,false);
-        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
-        Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
-    }
-
     private void resetCollidedObject()
     {
         handDetector.collided = false;
         handDetector.collidedObject = null;
         Debug.Log("Resetted handDetector");
     }
+    private void changeParentOfHandTo(GameObject newParentOfHand)
+    {
+        handController.transform.SetParent(newParentOfHand.transform, true);
+        //handCenter.transform.SetParent(newParentOfHand.transform, false);
+        Debug.Log("New Parent of hand: " + hand.transform.parent.name);
+        Debug.Log("New Parent of handCenter: " + handCenter.transform.parent.name);
+    }
 
     private void setHandnewCenterFlag(bool set)
     {
         isNewHandCenterInUse = set;
     }
+
     private Matrix4x4 newTranslationRotationScalingMatrix(GameObject myObject)
     {
         Matrix4x4 mat_hand = Matrix4x4.TRS(myObject.transform.position, myObject.transform.rotation, myObject.transform.localScale);
@@ -190,4 +198,6 @@ public class HomerScript : MonoBehaviour
         go.transform.localRotation = mat.rotation;
         //go.transform.localScale = mat.lossyScale;
     }
+
+
 }
