@@ -58,7 +58,7 @@ public class HomerScript : MonoBehaviour
         newHandCenterNode = GameObject.Find("NewHandCenterNode");
         setNewHandCenterNodePosition(initialHandPosition.transform.position);
 
-        Debug.Log(initialHandPosition);
+        // Debug.Log(initialHandPosition);
     }
 
     private void Update()
@@ -88,7 +88,7 @@ public class HomerScript : MonoBehaviour
         mySelectionRay.enableRay();
         handColliderProxy.GetComponent<BoxCollider>().enabled = true;
         handColliderProxy.SetActive(true);
-        Debug.Log("HomerScript was enabled");
+        // Debug.Log("HomerScript was enabled");
     }
 
     /*
@@ -125,15 +125,18 @@ public class HomerScript : MonoBehaviour
     }
 
     public void grabHomer()
-    {        
+    {
+        Debug.Log("grabHomer. Collided:" + handDetector.collided + "HandCenterInUse: " + isNewHandCenterInUse);
         if (!handDetector.collided && isNewHandCenterInUse == false)
         {
             moveHandToObject(hand, handCenter);
-        } else if (handDetector.collidedObject != null && isNewHandCenterInUse == true)
+        } else if (handDetector.collided && isNewHandCenterInUse == true)
         {
+            Debug.Log("Open selectObject?");
             selectObject(handDetector.collidedObject);
-        }  else
+        }  else if (handDetector.collided && isNewHandCenterInUse == false)
         {
+            Debug.Log("Grab objectt?");
             // Debug.Log("Collided Object: " + handDetector.collidedObject.name);
             setNewHandCenterNodePosition(handPositionOnCollision);
             setHandnewCenterFlagTo(true);
@@ -193,7 +196,7 @@ public class HomerScript : MonoBehaviour
         if (lastSelectedObjectIsEmptyFlag)
         {
             // Debug.Log("Move to lastSelectedObject: " + lastSelectedObject.name + " With Position: " + lastSelectedObject.transform.position);
-            Debug.Log("lastSelectedObjectIsEmpty");
+            // Debug.Log("lastSelectedObjectIsEmpty");
         } else
         {
             hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 5f * Time.deltaTime);
