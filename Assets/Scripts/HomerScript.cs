@@ -14,7 +14,10 @@ public class HomerScript : MonoBehaviour
     public LayerMask myLayerMask;
 
     private RayScript mySelectionRay;
+
     private GameObject lastSelectedObject = null;
+    private bool lastSelectedObjectIsEmptyFlag = true;
+    private GameObject emptyGameObject = null;
 
     private GameObject head;
     private GameObject hand;
@@ -54,7 +57,7 @@ public class HomerScript : MonoBehaviour
     private void Update()
     {
         refreshHandColliderPosition();
-        Debug.Log(head.name);
+        if (lastSelectedObjectIsEmptyFlag) Debug.Log("Last selected Object is empty.");
     }
 
     private void OnDisable()
@@ -94,6 +97,7 @@ public class HomerScript : MonoBehaviour
     {
         //Debug.Log(mySelectionRay.showRay(HandController));
         lastSelectedObject = mySelectionRay.showRay(HandController);
+        setLastSelectedObjectIsEmptyFlag(false);
     }
 
     public void grabHomer()
@@ -108,7 +112,8 @@ public class HomerScript : MonoBehaviour
             setHandnewCenterFlag(true);
             resetHandPosition();
             grabObject(handDetector.collidedObject);
-
+            resetCollidedObject();
+            resetLastSelectedObject();
         }
     }
 
@@ -134,6 +139,8 @@ public class HomerScript : MonoBehaviour
         setNewHandCenterNodePosition(initialHandPosition);
         changeParentOfHandControllerTo(head);
         setHandnewCenterFlag(false);
+        resetCollidedObject();
+        resetLastSelectedObject();
     }
 
     /*
@@ -141,7 +148,12 @@ public class HomerScript : MonoBehaviour
      */
     public void moveHandToObject(GameObject hand, GameObject handCenter)
     {
-        hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
+        if (lastSelectedObjectIsEmptyFlag)
+        {
+            // Debug.Log("Move to lastSelectedObject: " + lastSelectedObject.name + " With Position: " + lastSelectedObject.transform.position);
+            hand.transform.position = Vector3.MoveTowards(hand.transform.position, lastSelectedObject.transform.position, 7.5f * Time.deltaTime);
+        }
+        
     }
 
     public void resetHandPosition()
@@ -157,7 +169,8 @@ public class HomerScript : MonoBehaviour
         setNewHandCenterNodePosition(handPositionOnCollision);
         changeParentOfHandControllerTo(newHandCenterNode);
         
-        resetCollidedObject();        
+        resetCollidedObject();
+        resetLastSelectedObject();
     }
 
     private void setNewHandCenterNodePosition(Vector3 newPosition)
@@ -183,4 +196,18 @@ public class HomerScript : MonoBehaviour
     {
         isNewHandCenterInUse = set;
     }
+
+    private void resetLastSelectedObject() 
+    {
+        lastSelectedObjectIsEmptyFlag = true;
+        lastSelectedObject = emptyGameObject;
+        Debug.Log("Resetted lastSelectedObject: ");
+    }
+
+    public void setLastSelectedObjectIsEmptyFlag(bool toStatus)
+    {
+        lastSelectedObjectIsEmptyFlag = toStatus;
+    }
+
+
 }
